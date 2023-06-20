@@ -38,6 +38,13 @@ public:
     // 地面に接地しているか
     bool IsGround() const { return isGround; }
 
+private:
+    // 垂直速力更新処理　
+    void UpdateVerticalVelocity(float elapsedFrame);
+
+    // 垂直移動更新処理
+    void UpdateVerticalMove(float elapsedTime);
+
 protected:
     // 移動処理
     void Move(float elapsedTime, float vx, float vz, float speed);
@@ -64,4 +71,5 @@ protected:
     float height = 2.0f;
     DirectX::XMFLOAT3 velocity = { 0,0,0 };
     bool isGround = false;
+    float stepOffset = 1.0f;
 };

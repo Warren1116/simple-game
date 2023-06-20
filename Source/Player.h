@@ -35,8 +35,7 @@ private:
     void InputJump();
     // ’eŠÛ“ü—Íˆ—
     void InputProjectile();
-    // —‰ºˆ—‚µ‚È‚¢
-    void UpdateVelocity(float elapsedTIme) override;
+   
     
 private:
     Model* model = nullptr;

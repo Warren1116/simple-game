@@ -13,6 +13,9 @@ Player::Player() {
 
     // モデルが大きいのでスケーリング
     scale.x = scale.y = scale.z = 0.1f;
+
+
+    position.y = 1.5f;
     
     angle.x = DirectX::XMConvertToRadians(90);
 }
@@ -229,11 +232,5 @@ void Player::InputProjectile() {
         // 発射
         ProjectileStraight* projectile = new ProjectileStraight (&projectileManager);
         projectile->Launch(dir, pos);
-    }
-}
-
-void Player::UpdateVelocity(float elapsedTime) {
-    if (position.y < 3) {
-        position.y = 3;
     }
 }
