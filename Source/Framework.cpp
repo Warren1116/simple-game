@@ -39,6 +39,9 @@ void Framework::Update(float elapsedTime/*Elapsed seconds from last frame*/)
 // 描画処理
 void Framework::Render(float elapsedTime/*Elapsed seconds from last frame*/)
 {
+	// 排他制御
+	std::lock_guard<std::mutex> lock(graphics.GetMutex());
+
 	ID3D11DeviceContext* dc = graphics.GetDeviceContext();
 
 	// IMGUIフレーム開始処理
