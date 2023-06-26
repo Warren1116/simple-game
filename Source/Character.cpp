@@ -68,14 +68,110 @@ void Character::UpdateVerticalMove(float elapsedTime)
 	}
 }
 
+// 水平速力更新処理　
+void Character::UpdateHorizontalVelocity(float elapsedFrame)
+{
+	// XZ平面の速力を減速する
+	float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+	if (length > 0.0f)
+	{
+		// 摩擦力
+		float friction = this->friction * elapsedFrame;
 
+		// 空中にいるとき摩擦力を減らす
+		if (!isGround) friction *= airControl;
+
+		// 摩擦による横方向の減速処理
+		if (length > friction)
+		{
+			// 単位ベクトル化
+			float vx = velocity.x / length;
+			float vz = velocity.z / length;
+
+			velocity.x -= friction * vx;
+			velocity.z -= friction * vz;
+		}
+		// 横方向の速力が摩擦力以下になったので速力を無効化
+		else
+		{
+			velocity.x = 0.0f;
+			velocity.z = 0.0f;
+		}
+	}
+
+	// XZ平面の速力を加速する
+	if (length <= maxMoveSpeed)
+	{
+		// 移動ベクトルがゼロベクトルでないなら加速する
+		float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecZ * moveVecZ);
+		if (moveVecLength > 0.0f)
+		{
+			// 加速力
+			float acceleration = this->acceleration * elapsedFrame;
+
+			// 空中にいるとき加速力を減らす
+			if (!isGround) acceleration *= airControl;
+
+			// 移動ベクトルによる加速処理
+			velocity.x += acceleration * moveVecX;
+			velocity.z += acceleration * moveVecZ;
+
+
+			// 最大速度制限
+			length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+			if (length > maxMoveSpeed)
+			{
+				float vx = velocity.x / length;
+				float vz = velocity.z / length;
+
+				velocity.x = vx * maxMoveSpeed;
+				velocity.z = vz * maxMoveSpeed;
+			}
+		}
+	}
+	// 移動ベクトルリセット
+	moveVecX = 0.0f;
+	moveVecZ = 0.0f;
+}
+
+// 水平移動更新処理　
+void Character::UpdateHorizontalMove(float elapsedTime)
+{
+	float velocityLengthXZ = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+	if (velocityLengthXZ > 0.0f)
+	{
+		float mx = velocity.x * elapsedTime;
+		float mz = velocity.z * elapsedTime;
+
+		// レイの開始位置と終点位置
+		DirectX::XMFLOAT3 start = { position.x, position.y + stepOffset, position.z };
+		DirectX::XMFLOAT3 end = { position.x + mx, position.y + stepOffset, position.z + mz };
+
+		// レイキャストによる壁判定
+		HitResult hit;
+		if (Stage::Instance().RayCast(start, end, hit))
+		{
+			// 壁当たり判定
+		}
+		else
+		{
+			// 移動
+			position.x += mx;
+			position.z += mz;
+		}
+	}
+
+}
 
 // 移動処理
-void Character::Move(float elapsedTime, float vx, float vz, float speed)
+void Character::Move( float vx, float vz, float speed)
 {
-	speed *= elapsedTime;
-	position.x += vx * speed;
-	position.z += vz * speed;
+	// 移動方向ベクトルを設定
+	moveVecX = vx;
+	moveVecZ = vz;
+
+	// 最大速度設定
+	maxMoveSpeed = speed;
 }
 
 // 旋回処理
@@ -139,8 +235,13 @@ void Character::UpdateVelocity(float elapsedTime)
 	// 垂直速力更新処理
 	UpdateVerticalVelocity(elapsedFrame);
 
+	// 水平速力更新処理
+	UpdateHorizontalVelocity(elapsedFrame);
 	
 	// 垂直移動更新処理
 	UpdateVerticalMove(elapsedTime);
+
+	// 水平移動更新処理
+	UpdateHorizontalMove(elapsedTime);
 
 }

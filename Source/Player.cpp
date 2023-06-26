@@ -165,7 +165,7 @@ void Player::InputMove(float elapsedTime) {
     DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
     // ˆÚ“®ˆ—
-    Move(elapsedTime, moveVec.x, moveVec.z, moveSpeed);
+    Move(moveVec.x, moveVec.z, moveSpeed);
 
     Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
 }
