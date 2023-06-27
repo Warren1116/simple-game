@@ -36,15 +36,22 @@ private:
     void InputJump();
     // ’eŠÛ“ü—Íˆ—
     void InputProjectile();
-   
+    // ‘Oiˆ—
+    void MoveFront(float elapsedTime, DirectX::XMFLOAT3 direction, float speed);
+    // ‰ñ“]ˆ—
+    void InputTurn(float elapsedTime, DirectX::XMFLOAT3 direction, float speed);
     
 private:
     Model* model = nullptr;
-    float moveSpeed = 5.0f;
-    float turnSpeed = DirectX::XMConvertToRadians(720);
+    float moveSpeed = 80.0f;
+    float turnSpeed = DirectX::XMConvertToRadians(300);
     float jumpSpeed = 20.0f;
     int jumpCount = 0;
     int jumpLimit = 2;
     ProjectileManager projectileManager;
     Effect* hitEffect = nullptr;
+private:
+    // X²‰ñ“]§ŒÀ
+    const float AngleMaxX = DirectX::XMConvertToRadians(115); // ‰º‰ñ“]§ŒÀ
+    const float AngleMinX = DirectX::XMConvertToRadians(65);  // ã‰ñ“]§ŒÀ
 };

@@ -29,6 +29,9 @@ public:
     // スケール設定
     void SetScale(const DirectX::XMFLOAT3& scale) { this->scale = scale; }
 
+    // トランスフォーム取得
+    const DirectX::XMFLOAT4X4 GetTransform() const { return transform; }
+
     // 半径取得
     float GetRadius() const { return radius; }
 

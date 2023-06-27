@@ -12,10 +12,7 @@ Player::Player() {
     model = new Model("Data/Model/Player/Missile.mdl");
 
     // モデルが大きいのでスケーリング
-    scale.x = scale.y = scale.z = 0.1f;
-
-
-    position.y = 0.5f;
+    scale.x = scale.y = scale.z = 0.08f;
     
     angle.x = DirectX::XMConvertToRadians(90);
 
@@ -116,7 +113,7 @@ void Player::DrawDebugGUI() {
 
 // スティック入力値から移動ベクトルを取得
 DirectX::XMFLOAT3 Player::GetMoveVec() const {
-    // 入力情報を取得
+/*    // 入力情報を取得
     GamePad& gamePad = Input::Instance().GetGamePad();
     float ax = gamePad.GetAxisLX();
     float ay = gamePad.GetAxisLY();
@@ -154,11 +151,14 @@ DirectX::XMFLOAT3 Player::GetMoveVec() const {
     // スティックの垂直入力値をカメラ前方向に反映し、
     // 進行ベクトルを計算する
     DirectX::XMFLOAT3 vec;
-    vec.x = cameraRightX * ax + cameraFrontX * ay; // ベクトルを
+    vec.x = cameraRightX * ax + cameraFrontX * ay;
     vec.z = cameraRightZ * ax + cameraFrontZ * ay;
 
     // Y軸方向には移動しない
     vec.y = 0.0f;
+    */
+    // 本当は前方ベクトルを取り出すが90度回転させているので上方向ベクトルを入れておく
+    DirectX::XMFLOAT3 vec = { transform._21, transform._22, transform._23 };
 
     return vec;
 }
@@ -169,9 +169,10 @@ void Player::InputMove(float elapsedTime) {
     DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
     // 移動処理
-    Move(moveVec.x, moveVec.z, moveSpeed);
+    MoveFront(elapsedTime,moveVec, moveSpeed);
 
-    Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
+    // 入力回転処理
+    InputTurn(elapsedTime, moveVec, turnSpeed);
 }
 
 void Player::CollisionPlayerVsEnemies() {
@@ -237,5 +238,48 @@ void Player::InputProjectile() {
         // 発射
         ProjectileStraight* projectile = new ProjectileStraight (&projectileManager);
         projectile->Launch(dir, pos);
+    }
+}
+
+// 前進処理
+void Player::MoveFront(float elapsedTime, DirectX::XMFLOAT3 direction, float speed) {
+    speed *= elapsedTime;
+    // 常に前進処理
+    position.x += direction.x * speed;
+    position.y += direction.y * speed;
+    position.z += direction.z * speed;
+}
+
+// 向き変更
+void Player::InputTurn(float elapsedTime, DirectX::XMFLOAT3 direction, float speed) {
+    speed *= elapsedTime;
+
+    // 入力情報を取得
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    float ax = gamePad.GetAxisLX();
+    float ay = gamePad.GetAxisLY();
+
+    //// 内積値は-1.0～1.0で表現されており、2つの単位ベクトルの角度が
+    //// 小さいほど1.0に近づくという性質を利用して回転速度を調整する
+    //float rot = 1.0 - dot; // 補正値
+    //if (rot > speed) rot = speed;
+
+    angle.x -= ay * speed;
+    angle.y += ax * speed;
+
+    if (angle.y < -DirectX::XM_PI) {
+        angle.y += DirectX::XM_2PI;
+    }
+
+    if (angle.y > DirectX::XM_PI) {
+        angle.y -= DirectX::XM_2PI;
+    }
+
+    if (angle.x <= AngleMinX) {
+        angle.x = AngleMinX;
+    }
+
+    if (angle.x >= AngleMaxX) {
+        angle.x = AngleMaxX;
     }
 }

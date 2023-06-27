@@ -26,6 +26,7 @@ void SceneGame::Initialize()
 	);
 	// カメラコントローラー初期化
 	cameraController = new CameraController();
+	cameraController->SetCameraType(cameraController->CameraType1);
 
 	// エネミー初期化
 	for (int i = 0; i < 2; ++i) {
@@ -62,6 +63,11 @@ void SceneGame::Update(float elapsedTime)
 	DirectX::XMFLOAT3 target = player->GetPosition();
 	target.y += 0.5f;
 	cameraController->SetTarget(target);
+	if (cameraController->GetCameraType() == cameraController->CameraType2) {
+		DirectX::XMFLOAT3 direction = { player->GetTransform()._21, player->GetTransform()._22,player->GetTransform()._23 };
+		cameraController->SetTDirection(direction);
+	}
+
 	cameraController->Update(elapsedTime);
 	// ステージ更新処理
 	stage->Update(elapsedTime);
