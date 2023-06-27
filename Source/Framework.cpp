@@ -6,6 +6,7 @@
 #include "SceneTitle.h"
 #include "SceneManager.h"
 #include "Framework.h"
+#include "EffectManager.h"
 
 // 垂直同期間隔設定
 static const int syncInterval = 1;
@@ -16,6 +17,8 @@ Framework::Framework(HWND hWnd)
 	, input(hWnd)
 	, graphics(hWnd)
 {
+	EffectManager::Instance().Initialize();
+
 	// シーン初期化
 	SceneManager::Instance().ChangeScene(new SceneTitle);
 }
@@ -24,6 +27,7 @@ Framework::Framework(HWND hWnd)
 Framework::~Framework()
 {
 	SceneManager::Instance().Clear();
+	EffectManager::Instance().Finalize();
 }
 
 // 更新処理

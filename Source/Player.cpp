@@ -15,13 +15,17 @@ Player::Player() {
     scale.x = scale.y = scale.z = 0.1f;
 
 
-    position.y = 1.5f;
+    position.y = 0.5f;
     
     angle.x = DirectX::XMConvertToRadians(90);
+
+    hitEffect = new Effect("Data/Effect/Explosion.efk");
+
 }
 
 // デストラクタ
 Player::~Player() {
+    delete hitEffect;
     delete model;
 }
 
@@ -193,6 +197,7 @@ void Player::CollisionPlayerVsEnemies() {
             }
             // 押し出し後の位置設定
             else enemy->SetPosition(outPosition);
+            hitEffect->Play(this->GetPosition());
         }
     }
 }

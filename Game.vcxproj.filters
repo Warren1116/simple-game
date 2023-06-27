@@ -162,6 +162,12 @@
     <ClInclude Include="Source\SceneLoading.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Effect.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EffectManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -276,6 +282,12 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\SceneLoading.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Effect.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EffectManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

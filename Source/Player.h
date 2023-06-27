@@ -4,6 +4,7 @@
 #include "Graphics/Model.h"
 #include "Character.h"
 #include "ProjectileManager.h"
+#include "Effect.h"
 
 // ƒvƒŒƒCƒ„[
 class Player : public Character {
@@ -45,4 +46,5 @@ private:
     int jumpCount = 0;
     int jumpLimit = 2;
     ProjectileManager projectileManager;
+    Effect* hitEffect = nullptr;
 };

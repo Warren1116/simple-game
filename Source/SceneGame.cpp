@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "EnemyManager.h"
 #include "EnemySlime.h"
+#include "EffectManager.h"
 
 // 初期化
 void SceneGame::Initialize()
@@ -68,6 +69,8 @@ void SceneGame::Update(float elapsedTime)
 	player->Update(elapsedTime);
 	// エネミー更新処理
 	EnemyManager::Instance().Update(elapsedTime);
+
+	EffectManager::Instance().Update(elapsedTime);
 }
 
 // 描画処理
@@ -102,6 +105,10 @@ void SceneGame::Render()
 		player->Render(dc, shader);
 		EnemyManager::Instance().Render(dc, shader);
 		shader->End(dc);
+	}
+
+	{
+		EffectManager::Instance().Render(rc.view, rc.projection);
 	}
 
 	// 3Dデバッグ描画
