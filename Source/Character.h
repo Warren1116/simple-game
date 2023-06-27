@@ -45,9 +45,15 @@ private:
     // 垂直移動更新処理
     void UpdateVerticalMove(float elapsedTime);
 
+    // 水平速力更新処理　
+    void UpdateHorizontalVelocity(float elapsedFrame);
+
+    // 水平移動更新処理
+    void UpdateHorizontalMove(float elapsedTime);
+
 protected:
     // 移動処理
-    void Move(float elapsedTime, float vx, float vz, float speed);
+    void Move(float vx, float vz, float speed);
     // 旋回処理
     void Turn(float elapsedTime, float vx, float vz, float speed);
     // ジャンプ処理
@@ -71,5 +77,12 @@ protected:
     float height = 2.0f;
     DirectX::XMFLOAT3 velocity = { 0,0,0 };
     bool isGround = false;
-    float stepOffset = 1.0f;
+    float stepOffset = 0.0f;
+    float invincibleTimer = 0.0f;
+    float friction = 0.5f;
+    float acceleration = 1.0f;
+    float maxMoveSpeed = 5.0f;
+    float moveVecX = 0.0f;
+    float moveVecZ = 0.0f;
+    float airControl = 0.3f;
 };

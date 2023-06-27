@@ -207,17 +207,5 @@ bool Collision::IntersectRayVsModel(const DirectX::XMFLOAT3& start, const Direct
             }
         }
     }
-
-    /* if (end.y < 0.0f)
-     {
-         result.position.x = end.x;
-         result.position.y = 0.0f;
-         result.position.z = end.z;
-         result.normal.x = 0.0f;
-         result.normal.y = 1.0f;
-         result.normal.z = 0.0f;
-         return true;
-     }*/
-
     return hit;
 }
