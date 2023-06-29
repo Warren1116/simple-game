@@ -7,7 +7,7 @@ class CameraController {
 public:
 	CameraController () {}
 	~CameraController () {}
-
+	
 	// XVˆ—
 	void Update(float elapsedTime);
 

@@ -22,7 +22,7 @@ void Character::UpdateTransform()
 void Character::UpdateVerticalVelocity(float elapsedFrame)
 {
 	// d—Íˆ—
-	velocity.y += gravity * elapsedFrame;
+	//velocity.y += gravity * elapsedFrame;
 }
 
 // ‚’¼ˆÚ“®XVˆ—
@@ -69,9 +69,9 @@ void Character::UpdateVerticalMove(float elapsedTime)
 }
 
 // ˆÚ“®ˆ—
-void Character::Move(float elapsedTime, float vx, float vz, float speed)
+void Character::Move(float vx, float vz, float speed)
 {
-	speed *= elapsedTime;
+	//speed *= elapsedTime;
 	position.x += vx * speed;
 	position.z += vz * speed;
 }
