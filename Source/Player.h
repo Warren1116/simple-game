@@ -40,17 +40,35 @@ private:
     void MoveFront(float elapsedTime, DirectX::XMFLOAT3 direction, float speed);
     // ‰ñ“]ˆ—
     void InputTurn(float elapsedTime, DirectX::XMFLOAT3 direction, float speed);
-    
+    // ”R—¿ˆ—
+    void ChackMoveSpeed(float elapsedTime); // ‚±‚¢‚Â‚Ì’†‚Å”R—¿ŠÖ˜A‚Ìˆ—‚ğ‚·‚é
+    // ƒXƒs[ƒh‚ª‚ ‚é‚©‚Ç‚¤‚©
+    void ChackHasSpeed();
+    // ”R—¿‚ğg‚Á‚Ä‚¢‚é‚©
+    void ChackUseFuel();
 private:
     Model* model = nullptr;
     float moveSpeed = 80.0f;
     float turnSpeed = DirectX::XMConvertToRadians(300);
     float jumpSpeed = 20.0f;
+
+    float addSpeedEnergy = 100.0f; // ‘¬“x’Ç‰Á—Ê
+    float subSpeedEnergy = 10.0f; // ‘¬“xŒ¸­—Ê
+    float fuel = 100; // ”R—¿•Ï”
+    float subFuelEnergy = 10; // ”R—¿Œ¸­—Ê
+
     int jumpCount = 0;
     int jumpLimit = 2;
+
+    bool fuelUse = false; // ”R—¿g—p‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
+    bool hasSpeed = false; // ‘¬“x‚ª‚ ‚é‚©‚Ç‚¤‚©
+
     ProjectileManager projectileManager;
     Effect* hitEffect = nullptr;
 private:
+    // Y²‰ñ“]§ŒÀ
+    const float AngleMaxY = DirectX::XMConvertToRadians(35);  // ‰E‰ñ“]§ŒÀ
+    const float AngleMinY = DirectX::XMConvertToRadians(-35); // ¶‰ñ“]§ŒÀ
     // X²‰ñ“]§ŒÀ
     const float AngleMaxX = DirectX::XMConvertToRadians(115); // ‰º‰ñ“]§ŒÀ
     const float AngleMinX = DirectX::XMConvertToRadians(65);  // ã‰ñ“]§ŒÀ

@@ -104,6 +104,16 @@ void Player::DrawDebugGUI() {
             // Velocity
             ImGui::InputFloat3("Velocity", &velocity.x);
         }
+        if (ImGui::CollapsingHeader("FuelDebug", ImGuiTreeNodeFlags_DefaultOpen)) {
+            // AddSpeed
+            ImGui::InputFloat("AddSpeed", &addSpeedEnergy);
+            // SubSpeed
+            ImGui::InputFloat("SubSpeed", &subSpeedEnergy);
+            // Fuel
+            ImGui::InputFloat("Fuel", &fuel);
+            // SubFuelSpeed
+            ImGui::InputFloat("SubFuelSpeed", &subFuelEnergy);
+        }
         if (ImGui::CollapsingHeader("Collision", ImGuiTreeNodeFlags_DefaultOpen)) {
             ImGui::InputFloat("Radius", &radius);
         }
@@ -113,50 +123,6 @@ void Player::DrawDebugGUI() {
 
 // スティック入力値から移動ベクトルを取得
 DirectX::XMFLOAT3 Player::GetMoveVec() const {
-/*    // 入力情報を取得
-    GamePad& gamePad = Input::Instance().GetGamePad();
-    float ax = gamePad.GetAxisLX();
-    float ay = gamePad.GetAxisLY();
-
-    // カメラ方向とスティックの入力値によって進行方向を計算する
-    Camera& camera = Camera::Instance();
-    const DirectX::XMFLOAT3& cameraRight = camera.GetRight();
-    const DirectX::XMFLOAT3& cameraFront = camera.GetFront();
-
-    // 移動ベクトルはXZ平面に水平なベクトルになるようにする
-
-    // カメラ右方向ベクトルをXZ単位ベクトルに変換
-    float cameraRightX = cameraRight.x;
-    float cameraRightZ = cameraRight.z;
-    float cameraRightLength = sqrtf(cameraRightX * cameraRightX + cameraRightZ * cameraRightZ);
-
-    if (cameraRightLength > 0.0f) {
-        // 単位ベクトル化
-        cameraRightX = cameraRightX / cameraRightLength;
-        cameraRightZ = cameraRightZ / cameraRightLength;
-    }
-
-    // カメラ前方向ベクトルをXZ単位ベクトルに変換
-    float cameraFrontX = cameraFront.x;
-    float cameraFrontZ = cameraFront.z;
-    float cameraFrontLength = sqrtf(cameraFrontX * cameraFrontX + cameraFrontZ * cameraFrontZ);
-
-    if (cameraFrontLength > 0.0f) {
-        // 単位ベクトル化
-        cameraFrontX = cameraFrontX / cameraFrontLength;
-        cameraFrontZ = cameraFrontZ / cameraFrontLength;
-    }
-
-    // スティックの水平入力値をカメラ右方向に反映し、
-    // スティックの垂直入力値をカメラ前方向に反映し、
-    // 進行ベクトルを計算する
-    DirectX::XMFLOAT3 vec;
-    vec.x = cameraRightX * ax + cameraFrontX * ay;
-    vec.z = cameraRightZ * ax + cameraFrontZ * ay;
-
-    // Y軸方向には移動しない
-    vec.y = 0.0f;
-    */
     // 本当は前方ベクトルを取り出すが90度回転させているので上方向ベクトルを入れておく
     DirectX::XMFLOAT3 vec = { transform._21, transform._22, transform._23 };
 
@@ -168,11 +134,20 @@ void Player::InputMove(float elapsedTime) {
     // 進行ベクトル取得
     DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
+    // 燃料を使っているか
+    ChackUseFuel();
+
+    // 速度があるか
+    ChackHasSpeed();
+
+    // 速度調整処理
+    ChackMoveSpeed(elapsedTime);
+
     // 移動処理
     MoveFront(elapsedTime,moveVec, moveSpeed);
 
     // 入力回転処理
-    InputTurn(elapsedTime, moveVec, turnSpeed);
+    if (hasSpeed) InputTurn(elapsedTime, moveVec, turnSpeed);
 }
 
 void Player::CollisionPlayerVsEnemies() {
@@ -267,12 +242,12 @@ void Player::InputTurn(float elapsedTime, DirectX::XMFLOAT3 direction, float spe
     angle.x -= ay * speed;
     angle.y += ax * speed;
 
-    if (angle.y < -DirectX::XM_PI) {
-        angle.y += DirectX::XM_2PI;
+    if (angle.y < AngleMinY) {
+        angle.y = AngleMinY;
     }
 
-    if (angle.y > DirectX::XM_PI) {
-        angle.y -= DirectX::XM_2PI;
+    if (angle.y > AngleMaxY) {
+        angle.y = AngleMaxY;
     }
 
     if (angle.x <= AngleMinX) {
@@ -282,4 +257,32 @@ void Player::InputTurn(float elapsedTime, DirectX::XMFLOAT3 direction, float spe
     if (angle.x >= AngleMaxX) {
         angle.x = AngleMaxX;
     }
+}
+
+void Player::ChackMoveSpeed(float elapsedTime) {
+    float addSpeed = addSpeedEnergy * elapsedTime;
+    float subSpeed = subSpeedEnergy * elapsedTime;
+    float subFuel = subFuelEnergy * elapsedTime;
+    if (fuelUse && fuel > 0) {
+        moveSpeed += addSpeed;
+        fuel -= subFuel;
+    }
+    else {
+        moveSpeed -= subSpeed;
+        if (moveSpeed < 0) {
+            moveSpeed = 0;
+        }
+    }
+}
+
+void Player::ChackHasSpeed() {
+    if (moveSpeed > 0) hasSpeed = true;
+    else hasSpeed = false;
+}
+
+void Player::ChackUseFuel() {
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    const GamePadButton space = GamePad::BTN_SPACE;
+    if (gamePad.GetButtonDown() & space) fuelUse = true;
+    else if (gamePad.GetButtonUp() & space) fuelUse = false;
 }
