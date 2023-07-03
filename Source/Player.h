@@ -33,11 +33,11 @@ private:
     // プレイヤーとエネミーとの衝突処理
     void CollisionPlayerVsEnemies();
     // ジャンプ入力処理
-    void InputJump();
+    //void InputJump();
     // 弾丸入力処理
     void InputProjectile();
     // 前進処理
-    void MoveFront(float elapsedTime, DirectX::XMFLOAT3 direction, float speed);
+    void MoveFront(DirectX::XMFLOAT3 direction, float speed);
     // 回転処理
     void InputTurn(float elapsedTime, DirectX::XMFLOAT3 direction, float speed);
     // 燃料処理
@@ -49,10 +49,10 @@ private:
 private:
     Model* model = nullptr;
     float moveSpeed = 80.0f;
-    float turnSpeed = DirectX::XMConvertToRadians(300);
+    float turnSpeed = DirectX::XMConvertToRadians(100);
     float jumpSpeed = 20.0f;
 
-    float addSpeedEnergy = 100.0f; // 速度追加量
+    float addSpeedEnergy = 70.0f; // 速度追加量
     float subSpeedEnergy = 10.0f; // 速度減少量
     float fuel = 100; // 燃料変数
     float subFuelEnergy = 10; // 燃料減少量
@@ -65,6 +65,7 @@ private:
 
     ProjectileManager projectileManager;
     Effect* hitEffect = nullptr;
+    Effect* flyEffect = nullptr;
 private:
     // Y軸回転制限
     const float AngleMaxY = DirectX::XMConvertToRadians(35);  // 右回転制限

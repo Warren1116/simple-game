@@ -56,11 +56,11 @@ private:
 
 protected:
     // 移動処理
-    void Move(float vx, float vz, float speed);
+    //void Move(float vx, float vz, float speed);
     // 旋回処理
     void Turn(float elapsedTime, float vx, float vz, float speed);
     // ジャンプ処理
-    void Jump(float speed);
+    //void Jump(float speed);
     // 速度処理更新
     virtual void UpdateVelocity(float elasepdTime);
     // 着地した時に呼ばれる
@@ -86,6 +86,7 @@ protected:
     float acceleration = 1.0f;
     float maxMoveSpeed = 5.0f;
     float moveVecX = 0.0f;
+    float moveVecY = 0.0f;
     float moveVecZ = 0.0f;
     float airControl = 0.3f;
 };

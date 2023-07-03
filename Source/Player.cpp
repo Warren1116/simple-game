@@ -13,16 +13,18 @@ Player::Player() {
 
     // モデルが大きいのでスケーリング
     scale.x = scale.y = scale.z = 0.08f;
-    
+    position.y = 1.0f;
     angle.x = DirectX::XMConvertToRadians(90);
 
-    hitEffect = new Effect("Data/Effect/Explosion.efk");
+    hitEffect = new Effect("Data/Effect/hikari.efk");
+    flyEffect = new Effect("Data/Effect/Explosion.efk");
 
 }
 
 // デストラクタ
 Player::~Player() {
     delete hitEffect;
+    delete flyEffect;
     delete model;
 }
 
@@ -31,7 +33,7 @@ void Player::Update(float elapsedTime) {
     InputMove(elapsedTime);
 
     // ジャンプ入力処理
-    InputJump();
+    //InputJump();
 
     // 弾丸入力処理
     InputProjectile();
@@ -48,15 +50,22 @@ void Player::Update(float elapsedTime) {
     // オブジェクト行列を更新
     UpdateTransform();
     // モデル行列更新
-    model->UpdateTransform(transform);
+    if (model != nullptr)
+    {
+        model->UpdateTransform(transform);
+    }
 }
 
 // 描画処理
 void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
-    shader->Draw(dc, model);
+    if (model != nullptr)
+    {
+        shader->Draw(dc, model);
 
-    // 弾丸描画処理
-    projectileManager.Render(dc,shader);
+        // 弾丸描画処理
+        projectileManager.Render(dc,shader);
+
+    }
 }
 
 // デバッグプリミティブ描画
@@ -92,18 +101,18 @@ void Player::DrawDebugGUI() {
             // スケール
             ImGui::InputFloat3("Scale", &scale.x);
         }
-        if (ImGui::CollapsingHeader("Movement", ImGuiTreeNodeFlags_DefaultOpen)) {
-            // MoveSpeed
-            ImGui::InputFloat("MoveSpeed", &moveSpeed);
-            // TurnSpeed
-            ImGui::InputFloat("TurnSpeed", &turnSpeed);
-            // JumpSpeed
-            ImGui::InputFloat("JumpSpeed", &jumpSpeed);
-            // Gravity
-            ImGui::InputFloat("Gravity", &gravity);
-            // Velocity
-            ImGui::InputFloat3("Velocity", &velocity.x);
-        }
+        //if (ImGui::CollapsingHeader("Movement", ImGuiTreeNodeFlags_DefaultOpen)) {
+        //    // MoveSpeed
+        //    ImGui::InputFloat("MoveSpeed", &moveSpeed);
+        //    // TurnSpeed
+        //    ImGui::InputFloat("TurnSpeed", &turnSpeed);
+        //    // JumpSpeed
+        //    ImGui::InputFloat("JumpSpeed", &jumpSpeed);
+        //    // Gravity
+        //    ImGui::InputFloat("Gravity", &gravity);
+        //    // Velocity
+        //    ImGui::InputFloat3("Velocity", &velocity.x);
+        //}
         if (ImGui::CollapsingHeader("FuelDebug", ImGuiTreeNodeFlags_DefaultOpen)) {
             // AddSpeed
             ImGui::InputFloat("AddSpeed", &addSpeedEnergy);
@@ -114,9 +123,10 @@ void Player::DrawDebugGUI() {
             // SubFuelSpeed
             ImGui::InputFloat("SubFuelSpeed", &subFuelEnergy);
         }
-        if (ImGui::CollapsingHeader("Collision", ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::InputFloat("Radius", &radius);
-        }
+        //if (ImGui::CollapsingHeader("Collision", ImGuiTreeNodeFlags_DefaultOpen)) {
+        //    ImGui::InputFloat("Radius", &radius);
+        //}
+
     }
     ImGui::End();
 }
@@ -144,7 +154,7 @@ void Player::InputMove(float elapsedTime) {
     ChackMoveSpeed(elapsedTime);
 
     // 移動処理
-    MoveFront(elapsedTime,moveVec, moveSpeed);
+    MoveFront(moveVec, moveSpeed);
 
     // 入力回転処理
     if (hasSpeed) InputTurn(elapsedTime, moveVec, turnSpeed);
@@ -169,26 +179,27 @@ void Player::CollisionPlayerVsEnemies() {
             float length = playerHeight - enemyHeight; // プレイヤーの頭上と敵の頭上のベクトルを作る
             if (this->GetPosition().y > enemyHeight - length) {
                 velocity.y = 0;
-                Jump(10);
             }
             // 押し出し後の位置設定
             else enemy->SetPosition(outPosition);
             hitEffect->Play(this->GetPosition());
+            model = nullptr;
+            
         }
     }
 }
 
 // ジャンプ入力処理
-void Player::InputJump() {
-    // ボタン入力でジャンプ(ジャンプ回数制限つき)
-    GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButtonDown() & GamePad::BTN_A) {
-        if (jumpCount < jumpLimit) {
-            Jump(jumpSpeed);
-            jumpCount++;
-        }
-    }
-}
+//void Player::InputJump() {
+//    // ボタン入力でジャンプ(ジャンプ回数制限つき)
+//    GamePad& gamePad = Input::Instance().GetGamePad();
+//    if (gamePad.GetButtonDown() & GamePad::BTN_A) {
+//        if (jumpCount < jumpLimit) {
+//            Jump(jumpSpeed);
+//            jumpCount++;
+//        }
+//    }
+//}
 
 // 着地した時に呼ばれる
 void Player::OnLanding() {
@@ -217,12 +228,15 @@ void Player::InputProjectile() {
 }
 
 // 前進処理
-void Player::MoveFront(float elapsedTime, DirectX::XMFLOAT3 direction, float speed) {
-    speed *= elapsedTime;
+void Player::MoveFront(DirectX::XMFLOAT3 direction, float speed) {
     // 常に前進処理
-    position.x += direction.x * speed;
-    position.y += direction.y * speed;
-    position.z += direction.z * speed;
+
+    moveVecX += direction.x;
+    moveVecY += direction.y;
+    moveVecZ += direction.z;
+
+    maxMoveSpeed = speed;
+    //flyEffect->Play(this->GetPosition());
 }
 
 // 向き変更
@@ -242,21 +256,21 @@ void Player::InputTurn(float elapsedTime, DirectX::XMFLOAT3 direction, float spe
     angle.x -= ay * speed;
     angle.y += ax * speed;
 
-    if (angle.y < AngleMinY) {
-        angle.y = AngleMinY;
-    }
+    //if (angle.y < AngleMinY) {
+    //    angle.y = AngleMinY;
+    //}
 
-    if (angle.y > AngleMaxY) {
-        angle.y = AngleMaxY;
-    }
+    //if (angle.y > AngleMaxY) {
+    //    angle.y = AngleMaxY;
+    //}
 
-    if (angle.x <= AngleMinX) {
-        angle.x = AngleMinX;
-    }
+    //if (angle.x <= AngleMinX) {
+    //    angle.x = AngleMinX;
+    //}
 
-    if (angle.x >= AngleMaxX) {
-        angle.x = AngleMaxX;
-    }
+    //if (angle.x >= AngleMaxX) {
+    //    angle.x = AngleMaxX;
+    //}
 }
 
 void Player::ChackMoveSpeed(float elapsedTime) {
@@ -278,6 +292,7 @@ void Player::ChackMoveSpeed(float elapsedTime) {
 void Player::ChackHasSpeed() {
     if (moveSpeed > 0) hasSpeed = true;
     else hasSpeed = false;
+
 }
 
 void Player::ChackUseFuel() {
