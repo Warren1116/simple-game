@@ -99,7 +99,7 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
 			if (length > maxMoveSpeed)
 			{
 				float vx = velocity.x / length;
-				float vy = velocity.x / length;
+				float vy = velocity.y / length;
 				float vz = velocity.z / length;
 
 				velocity.x = vx * maxMoveSpeed;

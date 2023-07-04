@@ -26,7 +26,7 @@ void SceneGame::Initialize()
 	);
 	// カメラコントローラー初期化
 	cameraController = new CameraController();
-	cameraController->SetCameraType(cameraController->CameraType1);
+	cameraController->SetCameraType(cameraController->CameraType2);
 
 	// エネミー初期化
 	for (int i = 0; i < 2; ++i) {

@@ -104,7 +104,7 @@ void Player::DrawDebugGUI() {
         }
         if (ImGui::CollapsingHeader("Movement", ImGuiTreeNodeFlags_DefaultOpen)) {
             // MoveSpeed
-            ImGui::InputFloat("MoveSpeed", &moveSpeed);
+            ImGui::InputFloat("Acceleration", &acceleration);
             // TurnSpeed
             ImGui::InputFloat("TurnSpeed", &turnSpeed);
             // JumpSpeed
@@ -277,6 +277,7 @@ void Player::ChackMoveSpeed(float elapsedTime) {
     float subSpeed = subSpeedEnergy * elapsedTime;
     float subFuel = subFuelEnergy * elapsedTime;
     if (fuelUse && fuel > 0) {
+        this->acceleration += addSpeed;
         moveSpeed += addSpeed;
         fuel -= subFuel;
     }
