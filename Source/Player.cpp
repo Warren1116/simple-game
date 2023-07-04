@@ -104,7 +104,7 @@ void Player::DrawDebugGUI() {
         }
         if (ImGui::CollapsingHeader("Movement", ImGuiTreeNodeFlags_DefaultOpen)) {
             // MoveSpeed
-            ImGui::InputFloat("Acceleration", &acceleration);
+            ImGui::InputFloat("MaxMoveSpeed", &maxMoveSpeed);
             // TurnSpeed
             ImGui::InputFloat("TurnSpeed", &turnSpeed);
             // JumpSpeed
@@ -234,7 +234,7 @@ void Player::MoveFront(DirectX::XMFLOAT3 direction, float speed) {
     moveVecY += direction.y;
     moveVecZ += direction.z;
 
-    maxMoveSpeed = speed;
+    //maxMoveSpeed = speed;
     //flyEffect->Play(this->GetPosition());
 }
 
@@ -277,14 +277,14 @@ void Player::ChackMoveSpeed(float elapsedTime) {
     float subSpeed = subSpeedEnergy * elapsedTime;
     float subFuel = subFuelEnergy * elapsedTime;
     if (fuelUse && fuel > 0) {
-        this->acceleration += addSpeed;
+        this->maxMoveSpeed += addSpeed;
         moveSpeed += addSpeed;
         fuel -= subFuel;
     }
     else {
-        moveSpeed -= subSpeed;
-        if (moveSpeed < 0) {
-            moveSpeed = 0;
+        maxMoveSpeed -= subSpeed;
+        if (maxMoveSpeed < 0) {
+            maxMoveSpeed = 0;
         }
     }
 }

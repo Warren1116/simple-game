@@ -46,13 +46,14 @@ private:
     void ChackHasSpeed();
     // ”R—¿‚ğg‚Á‚Ä‚¢‚é‚©
     void ChackUseFuel();
+
 private:
     Model* model = nullptr;
     float moveSpeed = 800.0f;
     float turnSpeed = DirectX::XMConvertToRadians(100);
     float jumpSpeed = 20.0f;
 
-    float addSpeedEnergy = 3.0f; // ‘¬“x’Ç‰Á—Ê
+    float addSpeedEnergy = 100.0f; // ‘¬“x’Ç‰Á—Ê
     float subSpeedEnergy = 10.0f; // ‘¬“xŒ¸­—Ê
     float fuel = 100; // ”R—¿•Ï”
     float subFuelEnergy = 10; // ”R—¿Œ¸­—Ê

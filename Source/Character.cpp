@@ -52,65 +52,76 @@ void Character::UpdateVerticalMove(float elapsedTime)
 
 void Character::UpdateHorizontalVelocity(float elapsedFrame)
 {
-	//XZ•½–Ê‚Ì‘¬—Í‚ðŒ¸‘¬‚·‚é
-	float length = sqrtf(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
+	////XZ•½–Ê‚Ì‘¬—Í‚ðŒ¸‘¬‚·‚é
+	//float length = sqrtf(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
 
-	if (length > 0.0f)
-	{
-		//–€ŽC—Í
-		float friction = this->friction * elapsedFrame;
+	//if (length > 0.0f)
+	//{
+	//	//–€ŽC—Í
+	//	float friction = this->friction * elapsedFrame;
 
-		friction *= airControl;
+	//	friction *= airControl;
 
-		//–€ŽC‚É‚æ‚é‰¡•ûŒü‚ÌŒ¸‘¬ˆ—
-		if (length > friction)
-		{
-			//’PˆÊƒxƒNƒgƒ‹‰»
-			float vx = velocity.x / length;
-			float vy = velocity.y / length;
-			float vz = velocity.z / length;
+	//	//–€ŽC‚É‚æ‚é‰¡•ûŒü‚ÌŒ¸‘¬ˆ—
+	//	if (length > friction)
+	//	{
+	//		//’PˆÊƒxƒNƒgƒ‹‰»
+	//		float vx = velocity.x / length;
+	//		float vy = velocity.y / length;
+	//		float vz = velocity.z / length;
 
-			velocity.x -= vx * friction;
-			velocity.y -= vy * friction;
-			velocity.z -= vz * friction;
-		}
-		//‰¡•ûŒü‚Ì‘¬—Í‚ª–€ŽC—ÍˆÈ‰º‚É‚È‚Á‚½‚Ì‚Å‘¬—Í‚ð–³Œø‰»
-		else
-		{
-			velocity.x = 0.0f;
-			velocity.y = 0.0f;
-			velocity.z = 0.0f;
-		}
-	}
-	//XZ•½–Ê‚Ì‘¬—Í‚ð‰Á‘¬‚·‚é
-	if (length <= maxMoveSpeed)
-	{
-		float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecY * moveVecY + moveVecZ * moveVecZ);
-		if (moveVecLength > 0.0f)
-		{
-			float acceleration = this->acceleration * elapsedFrame;
+	//		velocity.x -= vx * friction;
+	//		velocity.y -= vy * friction;
+	//		velocity.z -= vz * friction;
+	//	}
+	//	//‰¡•ûŒü‚Ì‘¬—Í‚ª–€ŽC—ÍˆÈ‰º‚É‚È‚Á‚½‚Ì‚Å‘¬—Í‚ð–³Œø‰»
+	//	else
+	//	{
+	//		velocity.x = 0.0f;
+	//		velocity.y = 0.0f;
+	//		velocity.z = 0.0f;
+	//	}
+	//}
+	////XZ•½–Ê‚Ì‘¬—Í‚ð‰Á‘¬‚·‚é
+	//if (length <= maxMoveSpeed)
+	//{
+	//	float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecY * moveVecY + moveVecZ * moveVecZ);
+	//	if (moveVecLength > 0.0f)
+	//	{
+	//		float acceleration = this->acceleration * elapsedFrame;
 
-			//‹ó’†‚É‚¢‚é‚Æ‚«‚Í‰Á‘¬—Í‚ðŒ¸‚ç‚·
-			velocity.x += moveVecX * acceleration;
-			velocity.y += moveVecY * acceleration;
-			velocity.z += moveVecZ * acceleration;
+	//		//‹ó’†‚É‚¢‚é‚Æ‚«‚Í‰Á‘¬—Í‚ðŒ¸‚ç‚·
+	//		velocity.x += moveVecX * acceleration;
+	//		velocity.y += moveVecY * acceleration;
+	//		velocity.z += moveVecZ * acceleration;
 
-			float length = sqrtf(velocity.x * velocity.x +velocity.y * velocity.y + velocity.z * velocity.z);
-			if (length > maxMoveSpeed)
-			{
-				float vx = velocity.x / length;
-				float vy = velocity.y / length;
-				float vz = velocity.z / length;
+	//		float length = sqrtf(velocity.x * velocity.x +velocity.y * velocity.y + velocity.z * velocity.z);
+	//		if (length > maxMoveSpeed)
+	//		{
+	//			float vx = velocity.x / length;
+	//			float vy = velocity.y / length;
+	//			float vz = velocity.z / length;
 
-				velocity.x = vx * maxMoveSpeed;
-				velocity.y = vy * maxMoveSpeed;
-				velocity.z = vz * maxMoveSpeed;
-			}
-		}
-	}
-	moveVecX = 0.0f;
-	moveVecY = 0.0f;
-	moveVecZ = 0.0f;
+	//			velocity.x = vx * maxMoveSpeed;
+	//			velocity.y = vy * maxMoveSpeed;
+	//			velocity.z = vz * maxMoveSpeed;
+	//		}
+	//	}
+	//}
+	//moveVecX = 0.0f;
+	//moveVecY = 0.0f;
+	//moveVecZ = 0.0f;
+
+	//velocity.x = moveVecX;
+	//velocity.y = moveVecY;
+	//velocity.z = moveVecZ;
+
+	float friction = this->friction * elapsedFrame;
+
+	float speed = this->maxMoveSpeed;
+	velocity.x = transform._21 * speed/* * friction*/; // direction
+	velocity.y = transform._22 * speed/* * friction*/; // velocity = direction * speed;
+	velocity.z = transform._23 * speed /** friction*/;
 
 }
 
