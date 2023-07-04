@@ -55,6 +55,33 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
 	//XZ•½–Ê‚Ì‘¬—Í‚ðŒ¸‘¬‚·‚é
 	float length = sqrtf(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
 
+	if (length > 0.0f)
+	{
+		//–€ŽC—Í
+		float friction = this->friction * elapsedFrame;
+
+		friction *= airControl;
+
+		//–€ŽC‚É‚æ‚é‰¡•ûŒü‚ÌŒ¸‘¬ˆ—
+		if (length > friction)
+		{
+			//’PˆÊƒxƒNƒgƒ‹‰»
+			float vx = velocity.x / length;
+			float vy = velocity.y / length;
+			float vz = velocity.z / length;
+
+			velocity.x -= vx * friction;
+			velocity.y -= vy * friction;
+			velocity.z -= vz * friction;
+		}
+		//‰¡•ûŒü‚Ì‘¬—Í‚ª–€ŽC—ÍˆÈ‰º‚É‚È‚Á‚½‚Ì‚Å‘¬—Í‚ð–³Œø‰»
+		else
+		{
+			velocity.x = 0.0f;
+			velocity.y = 0.0f;
+			velocity.z = 0.0f;
+		}
+	}
 	//XZ•½–Ê‚Ì‘¬—Í‚ð‰Á‘¬‚·‚é
 	if (length <= maxMoveSpeed)
 	{

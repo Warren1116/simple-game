@@ -6,6 +6,7 @@
 #include "Collision.h"
 #include "Input/Input.h"
 #include "Graphics/Graphics.h"
+#include <cmath>
 
 // コンストラクタ
 Player::Player() {
@@ -16,7 +17,7 @@ Player::Player() {
     position.y = 1.0f;
     angle.x = DirectX::XMConvertToRadians(90);
 
-    hitEffect = new Effect("Data/Effect/hikari.efk");
+    hitEffect = new Effect("Data/Effect/Explosion.efk");
     flyEffect = new Effect("Data/Effect/Explosion.efk");
 
 }
@@ -101,18 +102,18 @@ void Player::DrawDebugGUI() {
             // スケール
             ImGui::InputFloat3("Scale", &scale.x);
         }
-        //if (ImGui::CollapsingHeader("Movement", ImGuiTreeNodeFlags_DefaultOpen)) {
-        //    // MoveSpeed
-        //    ImGui::InputFloat("MoveSpeed", &moveSpeed);
-        //    // TurnSpeed
-        //    ImGui::InputFloat("TurnSpeed", &turnSpeed);
-        //    // JumpSpeed
-        //    ImGui::InputFloat("JumpSpeed", &jumpSpeed);
-        //    // Gravity
-        //    ImGui::InputFloat("Gravity", &gravity);
-        //    // Velocity
-        //    ImGui::InputFloat3("Velocity", &velocity.x);
-        //}
+        if (ImGui::CollapsingHeader("Movement", ImGuiTreeNodeFlags_DefaultOpen)) {
+            // MoveSpeed
+            ImGui::InputFloat("MoveSpeed", &moveSpeed);
+            // TurnSpeed
+            ImGui::InputFloat("TurnSpeed", &turnSpeed);
+            // JumpSpeed
+            ImGui::InputFloat("JumpSpeed", &jumpSpeed);
+            // Gravity
+            ImGui::InputFloat("Gravity", &gravity);
+            // Velocity
+            ImGui::InputFloat3("Velocity", &velocity.x);
+        }
         if (ImGui::CollapsingHeader("FuelDebug", ImGuiTreeNodeFlags_DefaultOpen)) {
             // AddSpeed
             ImGui::InputFloat("AddSpeed", &addSpeedEnergy);
@@ -123,9 +124,7 @@ void Player::DrawDebugGUI() {
             // SubFuelSpeed
             ImGui::InputFloat("SubFuelSpeed", &subFuelEnergy);
         }
-        //if (ImGui::CollapsingHeader("Collision", ImGuiTreeNodeFlags_DefaultOpen)) {
-        //    ImGui::InputFloat("Radius", &radius);
-        //}
+
 
     }
     ImGui::End();

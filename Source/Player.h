@@ -48,7 +48,7 @@ private:
     void ChackUseFuel();
 private:
     Model* model = nullptr;
-    float moveSpeed = 80.0f;
+    float moveSpeed = 800.0f;
     float turnSpeed = DirectX::XMConvertToRadians(100);
     float jumpSpeed = 20.0f;
 
@@ -68,8 +68,8 @@ private:
     Effect* flyEffect = nullptr;
 private:
     // Y²‰ñ“]§ŒÀ
-    const float AngleMaxY = DirectX::XMConvertToRadians(35);  // ‰E‰ñ“]§ŒÀ
-    const float AngleMinY = DirectX::XMConvertToRadians(-35); // ¶‰ñ“]§ŒÀ
+    const float AngleMaxY = DirectX::XMConvertToRadians(90);  // ‰E‰ñ“]§ŒÀ
+    const float AngleMinY = DirectX::XMConvertToRadians(-90); // ¶‰ñ“]§ŒÀ
     // X²‰ñ“]§ŒÀ
     const float AngleMaxX = DirectX::XMConvertToRadians(115); // ‰º‰ñ“]§ŒÀ
     const float AngleMinX = DirectX::XMConvertToRadians(65);  // ã‰ñ“]§ŒÀ
