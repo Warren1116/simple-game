@@ -13,13 +13,14 @@
 // コンストラクタ
 Player::Player() {
     model = std::make_unique<Model>("Data/Model/Player/Rocket.mdl");
+
     // モデルが大きいのでスケーリング
     scale.x = scale.y = scale.z = 0.05f;
     position.y = 60.0f;
     position.z = -600.0f;
     angle.x = DirectX::XMConvertToRadians(90);
 
-    hitEffect = std::make_unique<Effect>("Data/Effect/Explosion.efk");
+    //hitEffect = std::make_unique<Effect>("Data/Effect/Explosion.efk");
     flyEffect = std::make_unique<Effect>("Data/Effect/engine0.1.efk");
 
     spriteGameclear = new Sprite("Data/Sprite/gameclear.png");
@@ -47,7 +48,7 @@ void Player::Update(float elapsedTime) {
     // オブジェクト行列を更新
     UpdateTransform();
     // モデル行列更新
-    if (model != nullptr)
+    if (model!= nullptr)
     {
         model->UpdateTransform(transform);
     }
@@ -84,6 +85,11 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
     }
     else if (IsDead() && ishitEnemy == false)
     {
+        if (effectcount > 0)
+        {
+            hitEffect->Play(this->GetPosition());
+            effectcount--;
+        }
         timer--;    //count down 3sec
         if (timer <= 0)
         {
@@ -112,6 +118,7 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
         projectileManager.Render(dc,shader);
 
     }
+
 }
 
 // デバッグプリミティブ描画

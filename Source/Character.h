@@ -3,11 +3,15 @@
 #include <DirectXMath.h>
 #include "Audio/Audio.h"
 #include "Audio/AudioResource.h"
+#include "Graphics/Shader.h"
+#include "Graphics/Model.h"
+#include "Effect.h"
 
 // キャラクター
 class Character {
 public:
-    Character() { se_explosion = Audio::Instance().LoadAudioSource("Data/Audio/explosion05.wav"); }
+    Character() { hitEffect = std::make_unique<Effect>("Data/Effect/Explosion.efk"),
+        se_explosion = Audio::Instance().LoadAudioSource("Data/Audio/explosion05.wav");}
     virtual ~Character(){}
 
     // 行列更新処理
@@ -56,17 +60,19 @@ private:
     // 水平移動更新処理
     void UpdateHorizontalMove(float elapsedTime);
 
+    void CheckWallCollision();
+
+    void PlaySE();
+
+
 protected:
-    // 移動処理
-    //void Move(float vx, float vz, float speed);
     // 旋回処理
     void Turn(float elapsedTime, float vx, float vz, float speed);
-    // ジャンプ処理
-    //void Jump(float speed);
     // 速度処理更新
     virtual void UpdateVelocity(float elasepdTime);
     // 着地した時に呼ばれる
     virtual void OnLanding() {}
+
     bool IsDead() const { return isDead; }
 
 
@@ -80,7 +86,6 @@ protected:
         0,0,1,0,
         0,0,0,1
     };
-    std::unique_ptr<AudioSource>se_explosion = nullptr;
     float radius = 0.5f; // 半径50cmということ
     float gravity = -1.0f;
     float height = 2.0f;
@@ -97,5 +102,10 @@ protected:
     float airControl = 0.3f;
     bool isDead = false;//死亡判定
     int timer = 0.0f;
+    int counter = 1;
+    std::unique_ptr<Model> model;
+    std::unique_ptr<Effect> hitEffect = nullptr;
+    std::unique_ptr<AudioSource>se_explosion = nullptr;
+
 
 };

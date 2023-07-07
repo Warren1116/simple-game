@@ -33,13 +33,10 @@ public:
     // 燃料取得
     float GetFuel() const { return fuel; }
 
-    Model* GetModel() { return model.get(); }
-
 
 protected:
     // 着地した時に呼ばれる
     void OnLanding() override;
-    std::unique_ptr<Model> model;
 
 private:
     void InputMove(float elapsedTime);
@@ -61,7 +58,7 @@ private:
     void DrawClear(ID3D11DeviceContext* dc);
     void DrawOver(ID3D11DeviceContext* dc);
 
-
+    
 
 private:
     //modelを消すためにスマートポインタを使う
@@ -87,14 +84,16 @@ private:
     bool fuelUse = false; // 燃料使用しているかどうか
     bool hasSpeed = false; // 速度があるかどうか
 
+    
+
     ProjectileManager projectileManager;
+    //std::unique_ptr<Model> model;
 
     //effectの追加
-    std::unique_ptr<Effect> hitEffect = nullptr;
+    //std::unique_ptr<Effect> hitEffect = nullptr;
     std::unique_ptr<Effect> flyEffect = nullptr;
     Sprite* spriteGameclear = nullptr;
     Sprite* spriteGameover = nullptr;
-    Effekseer::Handle handle = 0;
 
 private:
     // Y軸回転制限

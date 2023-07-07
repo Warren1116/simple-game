@@ -22,7 +22,6 @@ void Character::UpdateTransform()
 // 垂直速力更新処理
 void Character::UpdateVerticalVelocity(float elapsedFrame)
 {
-	// 重力処理
 	
 }
 
@@ -31,8 +30,7 @@ void Character::UpdateVerticalMove(float elapsedTime)
 {
 	// 進行方向の移動量
 	float my = velocity.y * elapsedTime;
-	//Model* player_model = Player::Instance().GetModel();
-
+	
 		// レイの開始位置は足元より少し上
 		DirectX::XMFLOAT3 start = { position.x, position.y + stepOffset, position.z };
 		// レイの終了位置は移動後の位置
@@ -46,10 +44,14 @@ void Character::UpdateVerticalMove(float elapsedTime)
 			position.y = hit.position.y;
 
 			velocity.y = hit.position.y;
-			se_explosion->Play(false);
+			if (counter > 0)
+			{
+				PlaySE();
+				counter--;
+			}
 			isDead = true;
 			velocity = {};
-			//player_model = nullptr;
+			CheckWallCollision();
 		}
 
 
@@ -158,10 +160,14 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 				// 壁ずり方向で壁に当たらなかったら補正位置に移動
 				position.x = collectPosition.x;
 				position.z = collectPosition.z;
-				se_explosion->Play(false);
+				if (counter > 0)
+				{
+					PlaySE();
+					counter--;
+				}
 				isDead = true;
 				velocity = {};
-				//player_model = nullptr;
+				CheckWallCollision();
 			}
 			else
 			{
@@ -175,7 +181,11 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 		else if (position.y >= 150.7f)
 		{
 			position.y = 150.7f;
-			se_explosion->Play(false);
+			if (counter > 0)
+			{
+				PlaySE();
+				counter--;
+			}
 		}
 		else
 		{
@@ -186,6 +196,16 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 		}
 	}
 
+}
+
+void Character::CheckWallCollision()
+{
+	model = nullptr;
+}
+
+void Character::PlaySE()
+{
+	se_explosion->Play(false);
 }
 
 
@@ -252,4 +272,5 @@ void Character::UpdateVelocity(float elapsedTime)
 	UpdateVerticalMove(elapsedTime);
 	UpdateHorizontalMove(elapsedTime);
 
+	
 }
