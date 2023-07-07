@@ -1,11 +1,13 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include "Audio/Audio.h"
+#include "Audio/AudioResource.h"
 
 // キャラクター
 class Character {
 public:
-    Character(){}
+    Character() { se_explosion = Audio::Instance().LoadAudioSource("Data/Audio/explosion05.wav"); }
     virtual ~Character(){}
 
     // 行列更新処理
@@ -65,6 +67,9 @@ protected:
     virtual void UpdateVelocity(float elasepdTime);
     // 着地した時に呼ばれる
     virtual void OnLanding() {}
+    bool IsDead() const { return isDead; }
+
+
 protected:
     DirectX::XMFLOAT3 position = { 0,0,0 };
     DirectX::XMFLOAT3 angle = { 0,0,0 };
@@ -75,18 +80,22 @@ protected:
         0,0,1,0,
         0,0,0,1
     };
+    std::unique_ptr<AudioSource>se_explosion = nullptr;
     float radius = 0.5f; // 半径50cmということ
     float gravity = -1.0f;
     float height = 2.0f;
     DirectX::XMFLOAT3 velocity = { 0,0,0 };
     bool isGround = false;
-    float stepOffset = 0.0f;
+    float stepOffset = 1.0f;
     float invincibleTimer = 0.0f;
     float friction = 0.5f;
-    float acceleration = 2.0f;
-    float maxMoveSpeed = 100.0f;
+    float acceleration = 1.0f;
+    float maxMoveSpeed = 5.0f;
     float moveVecX = 0.0f;
     float moveVecY = 0.0f;
     float moveVecZ = 0.0f;
-    float airControl = 0.5f;
+    float airControl = 0.3f;
+    bool isDead = false;//死亡判定
+    int timer = 0.0f;
+
 };

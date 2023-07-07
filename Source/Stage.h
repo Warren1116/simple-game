@@ -10,6 +10,8 @@ public:
     Stage();
     ~Stage();
 
+    void UpdateTransform();
+
     // çXêVèàóù
     void Update(float elapsedTime);
 
@@ -26,4 +28,8 @@ public:
 
 private:
     Model* model = nullptr;
+    DirectX::XMFLOAT4X4 transform = {};
+    DirectX::XMFLOAT3 angle = {};
+    DirectX::XMFLOAT3 scale = {};
+    DirectX::XMFLOAT3 position = {};
 };

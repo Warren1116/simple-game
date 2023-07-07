@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Graphics/Sprite.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioResource.h"
 #include "Scene.h"
 
 class SceneTitle : public Scene {
@@ -22,4 +24,5 @@ public:
 
 private:
     Sprite* sprite = nullptr;
+    std::unique_ptr<AudioSource>bgm = nullptr;
 };

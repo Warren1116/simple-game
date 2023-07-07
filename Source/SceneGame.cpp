@@ -8,9 +8,15 @@
 // 初期化
 void SceneGame::Initialize()
 {
+	// スプライト初期化
+	sprite_gauge = new Sprite("Data/Sprite/gauge.png");
+	sprite_in_gauge = new Sprite("Data/Sprite/In_gauge.png");
 	// ステージ初期化
 	stage = new Stage();
 	player = new Player();
+	// BGM初期化
+	bgm = Audio::Instance().LoadAudioSource("Data/Audio/game.wav");
+	bgm->Play(true);
 	// カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
@@ -53,6 +59,14 @@ void SceneGame::Finalize()
 	if (player != nullptr) {
 		delete player;
 		player = nullptr;
+	}
+	if (sprite_gauge != nullptr) {
+		delete sprite_gauge;
+		sprite_gauge = nullptr;
+	}
+	if (sprite_in_gauge != nullptr) {
+		delete sprite_in_gauge;
+		sprite_in_gauge = nullptr;
 	}
 }
 
@@ -134,7 +148,30 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
+		float screenWidth = static_cast<float>(700.0f);
+		float screenHeight = static_cast<float>(45.0f);
+		float textureWidth = static_cast<float>(sprite_gauge->GetTextureWidth());
+		float textureHeight = static_cast<float>(sprite_gauge->GetTextureHeight());
+		// ゲージスプライト描画
+		sprite_gauge->Render(dc,
+			275.0f, 600.0f, screenWidth, screenHeight,
+			0, 0, textureWidth, textureHeight,
+			0,
+			1, 1, 1, 1);
 
+		if (player->GetFuel() >= 0.0f)
+		{
+			screenWidth = static_cast<float>((player->GetFuel() / 100) * 690.0f);
+			screenHeight = static_cast<float>(39.0f);
+			textureWidth = static_cast<float>(sprite_in_gauge->GetTextureWidth());
+			textureHeight = static_cast<float>(sprite_in_gauge->GetTextureHeight());
+			// ゲージスプライト描画
+			sprite_in_gauge->Render(dc,
+				280.0f, 603.0f, screenWidth, screenHeight,
+				0, 0, textureWidth, textureHeight,
+				0,
+				1, 1, 1, 1);
+		}
 	}
 
 	// 2DデバッグGUI描画

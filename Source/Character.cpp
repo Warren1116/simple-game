@@ -1,5 +1,6 @@
 #include "Character.h"
 #include "Stage.h"
+#include "Player.h"
 
 // 行列更新処理
 void Character::UpdateTransform()
@@ -30,6 +31,7 @@ void Character::UpdateVerticalMove(float elapsedTime)
 {
 	// 進行方向の移動量
 	float my = velocity.y * elapsedTime;
+	//Model* player_model = Player::Instance().GetModel();
 
 		// レイの開始位置は足元より少し上
 		DirectX::XMFLOAT3 start = { position.x, position.y + stepOffset, position.z };
@@ -44,6 +46,10 @@ void Character::UpdateVerticalMove(float elapsedTime)
 			position.y = hit.position.y;
 
 			velocity.y = hit.position.y;
+			se_explosion->Play(false);
+			isDead = true;
+			velocity = {};
+			//player_model = nullptr;
 		}
 
 
@@ -52,76 +58,65 @@ void Character::UpdateVerticalMove(float elapsedTime)
 
 void Character::UpdateHorizontalVelocity(float elapsedFrame)
 {
-	////XZ平面の速力を減速する
-	//float length = sqrtf(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
+	//XZ平面の速力を減速する
+	float length = sqrtf(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
 
-	//if (length > 0.0f)
-	//{
-	//	//摩擦力
-	//	float friction = this->friction * elapsedFrame;
+	if (length > 0.0f)
+	{
+		//摩擦力
+		float friction = this->friction * elapsedFrame;
 
-	//	friction *= airControl;
+		friction *= airControl;
 
-	//	//摩擦による横方向の減速処理
-	//	if (length > friction)
-	//	{
-	//		//単位ベクトル化
-	//		float vx = velocity.x / length;
-	//		float vy = velocity.y / length;
-	//		float vz = velocity.z / length;
+		//摩擦による横方向の減速処理
+		if (length > friction)
+		{
+			//単位ベクトル化
+			float vx = velocity.x / length;
+			float vy = velocity.y / length;
+			float vz = velocity.z / length;
 
-	//		velocity.x -= vx * friction;
-	//		velocity.y -= vy * friction;
-	//		velocity.z -= vz * friction;
-	//	}
-	//	//横方向の速力が摩擦力以下になったので速力を無効化
-	//	else
-	//	{
-	//		velocity.x = 0.0f;
-	//		velocity.y = 0.0f;
-	//		velocity.z = 0.0f;
-	//	}
-	//}
-	////XZ平面の速力を加速する
-	//if (length <= maxMoveSpeed)
-	//{
-	//	float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecY * moveVecY + moveVecZ * moveVecZ);
-	//	if (moveVecLength > 0.0f)
-	//	{
-	//		float acceleration = this->acceleration * elapsedFrame;
+			velocity.x -= vx * friction;
+			velocity.y -= vy * friction;
+			velocity.z -= vz * friction;
+		}
+		//横方向の速力が摩擦力以下になったので速力を無効化
+		else
+		{
+			velocity.x = 0.0f;
+			velocity.y = 0.0f;
+			velocity.z = 0.0f;
+		}
+	}
+	//XZ平面の速力を加速する
+	if (length <= maxMoveSpeed)
+	{
+		float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecY * moveVecY + moveVecZ * moveVecZ);
+		if (moveVecLength > 0.0f)
+		{
+			float acceleration = this->acceleration * elapsedFrame;
 
-	//		//空中にいるときは加速力を減らす
-	//		velocity.x += moveVecX * acceleration;
-	//		velocity.y += moveVecY * acceleration;
-	//		velocity.z += moveVecZ * acceleration;
+			//空中にいるときは加速力を減らす
+			velocity.x += moveVecX * acceleration;
+			velocity.y += moveVecY * acceleration;
+			velocity.z += moveVecZ * acceleration;
 
-	//		float length = sqrtf(velocity.x * velocity.x +velocity.y * velocity.y + velocity.z * velocity.z);
-	//		if (length > maxMoveSpeed)
-	//		{
-	//			float vx = velocity.x / length;
-	//			float vy = velocity.y / length;
-	//			float vz = velocity.z / length;
+			float length = sqrtf(velocity.x * velocity.x +velocity.y * velocity.y + velocity.z * velocity.z);
+			if (length > maxMoveSpeed)
+			{
+				float vx = velocity.x / length;
+				float vy = velocity.y / length;
+				float vz = velocity.z / length;
 
-	//			velocity.x = vx * maxMoveSpeed;
-	//			velocity.y = vy * maxMoveSpeed;
-	//			velocity.z = vz * maxMoveSpeed;
-	//		}
-	//	}
-	//}
-	//moveVecX = 0.0f;
-	//moveVecY = 0.0f;
-	//moveVecZ = 0.0f;
-
-	//velocity.x = moveVecX;
-	//velocity.y = moveVecY;
-	//velocity.z = moveVecZ;
-
-	float friction = this->friction * elapsedFrame;
-
-	float speed = this->maxMoveSpeed;
-	velocity.x = transform._21 * speed/* * friction*/; // direction
-	velocity.y = transform._22 * speed/* * friction*/; // velocity = direction * speed;
-	velocity.z = transform._23 * speed /** friction*/;
+				velocity.x = vx * maxMoveSpeed;
+				velocity.y = vy * maxMoveSpeed;
+				velocity.z = vz * maxMoveSpeed;
+			}
+		}
+	}
+	moveVecX = 0.0f;
+	moveVecY = 0.0f;
+	moveVecZ = 0.0f;
 
 }
 
@@ -163,12 +158,24 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 				// 壁ずり方向で壁に当たらなかったら補正位置に移動
 				position.x = collectPosition.x;
 				position.z = collectPosition.z;
+				se_explosion->Play(false);
+				isDead = true;
+				velocity = {};
+				//player_model = nullptr;
 			}
 			else
 			{
 				position.x = hit2.position.x;
 				position.z = hit2.position.z;
 			}
+
+			
+		}
+		// 天井判定（仮）
+		else if (position.y >= 150.7f)
+		{
+			position.y = 150.7f;
+			se_explosion->Play(false);
 		}
 		else
 		{
@@ -181,13 +188,6 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 
 }
 
-//// 移動処理
-//void Character::Move(float vx, float vz, float speed)
-//{
-//	//speed *= elapsedTime;
-//	position.x += vx * speed;
-//	position.z += vz * speed;
-//}
 
 // 旋回処理
 void Character::Turn(float elapsedTime, float vx, float vz, float speed)
@@ -234,12 +234,7 @@ void Character::Turn(float elapsedTime, float vx, float vz, float speed)
 	}
 }
 
-// ジャンプ処理
-//void Character::Jump(float speed)
-//{
-//	 上方向の力を設定
-//	velocity.y = speed;
-//}
+
 
 // 速度処理更新
 void Character::UpdateVelocity(float elapsedTime)

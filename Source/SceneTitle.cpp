@@ -9,6 +9,10 @@
 void SceneTitle::Initialize() {
     // スプライト初期化
     sprite = new Sprite("Data/Sprite/Title.png");
+
+    // BGM初期化
+    bgm = Audio::Instance().LoadAudioSource("Data/Audio/title.wav");
+    bgm->Play(true);
 }
 
 // 終了化

@@ -6,44 +6,40 @@
 #include "Collision.h"
 #include "Input/Input.h"
 #include "Graphics/Graphics.h"
-#include <cmath>
+#include "SceneManager.h"
+#include "SceneTitle.h"
+
 
 // コンストラクタ
 Player::Player() {
-    model = new Model("Data/Model/Player/Missile.mdl");
-
+    model = std::make_unique<Model>("Data/Model/Player/Rocket.mdl");
     // モデルが大きいのでスケーリング
-    scale.x = scale.y = scale.z = 0.08f;
-    position.y = 1.0f;
+    scale.x = scale.y = scale.z = 0.05f;
+    position.y = 60.0f;
+    position.z = -600.0f;
     angle.x = DirectX::XMConvertToRadians(90);
 
-    hitEffect = new Effect("Data/Effect/Explosion.efk");
-    flyEffect = new Effect("Data/Effect/Explosion.efk");
+    hitEffect = std::make_unique<Effect>("Data/Effect/Explosion.efk");
+    flyEffect = std::make_unique<Effect>("Data/Effect/engine0.1.efk");
+
+    spriteGameclear = new Sprite("Data/Sprite/gameclear.png");
+    spriteGameover = new Sprite("Data/Sprite/gameover.png");
 
 }
 
 // デストラクタ
 Player::~Player() {
-    delete hitEffect;
-    delete flyEffect;
-    delete model;
+    delete spriteGameover;
+    delete spriteGameclear;
+
 }
 
 // 更新処理
 void Player::Update(float elapsedTime) {
     InputMove(elapsedTime);
 
-    // ジャンプ入力処理
-    //InputJump();
-
-    // 弾丸入力処理
-    InputProjectile();
-
     // 速力更新処理
     UpdateVelocity(elapsedTime);
-
-    // 弾丸更新処理
-    projectileManager.Update(elapsedTime);
 
     // プレイヤーと敵との衝突処理
     CollisionPlayerVsEnemies();
@@ -59,9 +55,58 @@ void Player::Update(float elapsedTime) {
 
 // 描画処理
 void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
+    if (IsDead() && ishitEnemy)
+    {
+        if (effectcount > 0)
+        {
+            hitEffect->Play(this->GetPosition());
+            effectcount--;
+        }
+
+        timer--;    //count down 3sec
+        if (timer <= 0)
+        {
+            DrawClear(dc);
+            GamePad& gamePad = Input::Instance().GetGamePad();
+
+            // なにかボタンを押したらローディングシーンへ切り替え
+            const GamePadButton anyButton =
+                GamePad::BTN_A |
+                GamePad::BTN_B |
+                GamePad::BTN_X |
+                GamePad::BTN_Y;
+
+            if (gamePad.GetButtonDown() & anyButton) {
+                SceneManager::Instance().ChangeScene(new SceneTitle);
+            }
+        }
+
+    }
+    else if (IsDead() && ishitEnemy == false)
+    {
+        timer--;    //count down 3sec
+        if (timer <= 0)
+        {
+            DrawOver(dc);
+            GamePad& gamePad = Input::Instance().GetGamePad();
+
+            // なにかボタンを押したらローディングシーンへ切り替え
+            const GamePadButton anyButton =
+                GamePad::BTN_A |
+                GamePad::BTN_B |
+                GamePad::BTN_X |
+                GamePad::BTN_Y;
+
+            if (gamePad.GetButtonDown() & anyButton) {
+                SceneManager::Instance().ChangeScene(new SceneTitle);
+            }
+        }
+    }
+
+
     if (model != nullptr)
     {
-        shader->Draw(dc, model);
+        shader->Draw(dc, model.get());
 
         // 弾丸描画処理
         projectileManager.Render(dc,shader);
@@ -104,7 +149,7 @@ void Player::DrawDebugGUI() {
         }
         if (ImGui::CollapsingHeader("Movement", ImGuiTreeNodeFlags_DefaultOpen)) {
             // MoveSpeed
-            ImGui::InputFloat("MaxMoveSpeed", &maxMoveSpeed);
+            ImGui::InputFloat("Acceleration", &acceleration);
             // TurnSpeed
             ImGui::InputFloat("TurnSpeed", &turnSpeed);
             // JumpSpeed
@@ -188,42 +233,9 @@ void Player::CollisionPlayerVsEnemies() {
     }
 }
 
-// ジャンプ入力処理
-//void Player::InputJump() {
-//    // ボタン入力でジャンプ(ジャンプ回数制限つき)
-//    GamePad& gamePad = Input::Instance().GetGamePad();
-//    if (gamePad.GetButtonDown() & GamePad::BTN_A) {
-//        if (jumpCount < jumpLimit) {
-//            Jump(jumpSpeed);
-//            jumpCount++;
-//        }
-//    }
-//}
-
 // 着地した時に呼ばれる
 void Player::OnLanding() {
     jumpCount = 0;
-}
-
-void Player::InputProjectile() {
-    GamePad& gamePad = Input::Instance().GetGamePad();
-
-    // 直進弾丸発射
-    if (gamePad.GetButtonDown() & GamePad::BTN_X) {
-        // 前方向
-        DirectX::XMFLOAT3 dir;
-        dir.x = sinf(angle.x);
-        dir.y = 0;
-        dir.z = cosf(angle.z);
-        // 発射位置 (プレイヤーの腰あたり)
-        DirectX::XMFLOAT3 pos;
-        pos.x = position.x;
-        pos.y = position.y + height * 0.5f;
-        pos.z = position.z;
-        // 発射
-        ProjectileStraight* projectile = new ProjectileStraight (&projectileManager);
-        projectile->Launch(dir, pos);
-    }
 }
 
 // 前進処理
@@ -234,7 +246,7 @@ void Player::MoveFront(DirectX::XMFLOAT3 direction, float speed) {
     moveVecY += direction.y;
     moveVecZ += direction.z;
 
-    //maxMoveSpeed = speed;
+    maxMoveSpeed = speed;
     //flyEffect->Play(this->GetPosition());
 }
 
@@ -277,14 +289,14 @@ void Player::ChackMoveSpeed(float elapsedTime) {
     float subSpeed = subSpeedEnergy * elapsedTime;
     float subFuel = subFuelEnergy * elapsedTime;
     if (fuelUse && fuel > 0) {
-        this->maxMoveSpeed += addSpeed;
+        this->acceleration += addSpeed;
         moveSpeed += addSpeed;
         fuel -= subFuel;
     }
     else {
-        maxMoveSpeed -= subSpeed;
-        if (maxMoveSpeed < 0) {
-            maxMoveSpeed = 0;
+        moveSpeed -= subSpeed;
+        if (moveSpeed < 0) {
+            moveSpeed = 0;
         }
     }
 }
@@ -298,6 +310,35 @@ void Player::ChackHasSpeed() {
 void Player::ChackUseFuel() {
     GamePad& gamePad = Input::Instance().GetGamePad();
     const GamePadButton space = GamePad::BTN_SPACE;
-    if (gamePad.GetButtonDown() & space) fuelUse = true;
-    else if (gamePad.GetButtonUp() & space) fuelUse = false;
+    if (gamePad.GetButtonDown() & space)
+    {
+        fuelUse = true;
+    }
+    else if (gamePad.GetButtonUp() & space)
+    {
+        fuelUse = false;
+    }
+    if (fuelUse && fuel > 0)
+    {
+        DirectX::XMFLOAT3 pos = this->GetPosition();
+        flyEffect->Play(pos);
+    }
+}
+
+void Player::DrawClear(ID3D11DeviceContext* dc)
+{
+    spriteGameclear->Render(dc,
+        300, 200, 1280 * 0.5f, 720 * 0.25,
+        0, 0, 1270, 150,
+        0,
+        1, 1, 1, 1);
+}
+
+void Player::DrawOver(ID3D11DeviceContext* dc)
+{
+    spriteGameover->Render(dc,
+        300, 200, 1280 * 0.5f, 720 * 0.25,
+        0, 0, 1135, 150,
+        0,
+        1, 1, 1, 1);
 }

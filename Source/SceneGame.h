@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Graphics/Sprite.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioResource.h"
 #include "Stage.h"
 #include "Player.h"
 #include "CameraController.h"
@@ -28,4 +31,7 @@ private:
 	Stage* stage = nullptr;
 	Player* player = nullptr;
 	CameraController* cameraController = nullptr;
+	Sprite* sprite_gauge = nullptr;
+	Sprite* sprite_in_gauge = nullptr;
+	std::unique_ptr<AudioSource>bgm = nullptr;
 };
