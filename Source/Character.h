@@ -48,14 +48,8 @@ public:
     bool IsGround() const { return isGround; }
 
 private:
-    // 垂直速力更新処理　
-    void UpdateVerticalVelocity(float elapsedFrame);
-
     // 垂直移動更新処理
     void UpdateVerticalMove(float elapsedTime);
-
-    // 水平速力更新処理　
-    void UpdateHorizontalVelocity(float elapsedFrame);
 
     // 水平移動更新処理
     void UpdateHorizontalMove(float elapsedTime);
@@ -66,6 +60,12 @@ private:
 
 
 protected:
+    // 垂直速力更新処理
+    virtual void UpdateVerticalVelocity(float elapsedFrame);
+
+    // 水平速力更新処理　
+    virtual void UpdateHorizontalVelocity(float elapsedFrame);
+
     // 旋回処理
     void Turn(float elapsedTime, float vx, float vz, float speed);
     // 速度処理更新
@@ -93,9 +93,10 @@ protected:
     bool isGround = false;
     float stepOffset = 1.0f;
     float invincibleTimer = 0.0f;
-    float friction = 0.5f;
-    float acceleration = 1.0f;
-    float maxMoveSpeed = 5.0f;
+    float friction = 3.0f;      // 摩擦力
+    float acceleration = 30.0f; // 加速度
+    float maxMoveSpeed = 50.0f; // 最大加速度
+    float moveSpeed = 50.0f;
     float moveVecX = 0.0f;
     float moveVecY = 0.0f;
     float moveVecZ = 0.0f;

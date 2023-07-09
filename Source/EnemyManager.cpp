@@ -39,27 +39,6 @@ void EnemyManager::Clear() {
 void EnemyManager::CollisionEnemyVsEnemies() {
     EnemyManager& enemyManager = EnemyManager::Instance();
 
-    // 全ての敵と総当たりで衝突処理
-    //int enemyCount = enemyManager.GetEnemyCount();
-    // 2重ループ
-    //for (int i = 0; i < enemyCount; i++) {
-    //    Enemy* enemy = enemyManager.GetEnemy(i);
-    //    for (int j = 0; j < enemyCount; j++) {
-    //        Enemy* enemies = enemyManager.GetEnemy(j);
-    //        // 衝突処理
-    //        DirectX::XMFLOAT3 outPosition;
-    //        if (Collision::IntersectSphereVsSphere(
-    //            enemy->GetPosition(), enemy->GetRadius(),
-    //            enemies->GetPosition(), enemies->GetRadius(),
-    //            outPosition
-    //        )) {
-    //            // 押し出し後の位置設定
-    //            enemies->SetPosition(outPosition);
-    //        }
-    //    }
-    //}
-    
-    // 先生の答え このやり方だと最後のやつは絶対に押し返すことは出来ない
     size_t enemyCount = enemies.size();
     for (int i = 0; i < enemyCount; ++i) {
         Enemy* enemyA = enemies.at(i);

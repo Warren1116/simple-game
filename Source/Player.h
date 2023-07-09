@@ -33,7 +33,6 @@ public:
     // 燃料取得
     float GetFuel() const { return fuel; }
 
-
 protected:
     // 着地した時に呼ばれる
     void OnLanding() override;
@@ -47,27 +46,31 @@ private:
     void MoveFront(DirectX::XMFLOAT3 direction, float speed);
     // 回転処理
     void InputTurn(float elapsedTime, DirectX::XMFLOAT3 direction, float speed);
-    // 燃料処理
-    void ChackMoveSpeed(float elapsedTime); // こいつの中で燃料関連の処理をする
+    // 速度変更処理
+    void ChangeSpeed(float elapsedTime);
     // スピードがあるかどうか
     void ChackHasSpeed();
     // 燃料を使っているか
     void ChackUseFuel();
+    // 重力による加減速
+    void GravityAdjust(float elapsedFrame); // もう少しいい名前あったら変えたい
+
+    void UpdateVerticalVelocity(float elapsedFrame) override;
+
+    void UpdateHorizontalVelocity(float elapsedFrame) override;
 
     //クリア画面とゲームオーバー画面を描画する
     void DrawClear(ID3D11DeviceContext* dc);
     void DrawOver(ID3D11DeviceContext* dc);
 
-    
-
 private:
     //modelを消すためにスマートポインタを使う
-    float moveSpeed = 800.0f;
     float turnSpeed = DirectX::XMConvertToRadians(100);
     float jumpSpeed = 20.0f;
+    float deathSpeed = 0.0f; // 死んだとき使う
 
-    float addSpeedEnergy = 3.0f; // 速度追加量
-    float subSpeedEnergy = 10.0f; // 速度減少量
+    float addSpeedEnergy = 5.0f; // 速度追加量
+    float subSpeedEnergy = -1.0f; // 速度減少量
     float fuel = 100; // 燃料変数
     float subFuelEnergy = 10; // 燃料減少量
 
@@ -75,7 +78,7 @@ private:
     int jumpLimit = 2;
 
     //死んだあと３秒間を数える
-    int timer = 180; //3秒間をCOUNTする
+    int deathTimer = 180; //3秒間をCOUNTする
     bool ishitEnemy = false;
 
 
@@ -83,8 +86,8 @@ private:
 
     bool fuelUse = false; // 燃料使用しているかどうか
     bool hasSpeed = false; // 速度があるかどうか
-
-    
+    bool onSubSpeed = false; // 減速させるかどうか
+    bool onAddSpeed = false; // 加速させるかどうか
 
     ProjectileManager projectileManager;
     //std::unique_ptr<Model> model;
@@ -96,10 +99,27 @@ private:
     Sprite* spriteGameover = nullptr;
 
 private:
+    // 定数 ImGuiで変更する都合上constがないですがここに書いている変数は定数つもりです
+
     // Y軸回転制限
-    const float AngleMaxY = DirectX::XMConvertToRadians(90);  // 右回転制限
-    const float AngleMinY = DirectX::XMConvertToRadians(-90); // 左回転制限
+    float AngleMaxY = DirectX::XMConvertToRadians(70);  // 右回転制限
+    float AngleMinY = DirectX::XMConvertToRadians(-70); // 左回転制限
     // X軸回転制限
-    const float AngleMaxX = DirectX::XMConvertToRadians(115); // 下回転制限
-    const float AngleMinX = DirectX::XMConvertToRadians(65);  // 上回転制限
+    float AngleMaxX = DirectX::XMConvertToRadians(115); // 下回転制限
+    float AngleMinX = DirectX::XMConvertToRadians(75);  // 上回転制限
+    // 速力がないときに向く角度
+    float DyingAngleX = DirectX::XMConvertToRadians(120);
+
+    float MaxAcceleSpeed = 60.0f;
+    float MinAcceleSpeed = 0.0f;
+    float MinVelocityZ = 20.0f;
+
+private:
+    // 補正値変数 初期値は変えないでください変更する際はImGui等でお願いします
+    float DeathFallAdjustment = 0.005f;             // 死亡時の落下速度に加える補正値
+    float DeathRotateAdjustment = 0.1f;             // 死亡時の回転速度に加える補正値
+    float GravityYAdjustmentNormal = 0.1f;          // 通常時の、上方向に付与する重力に加える補正値
+    float GravityYAdjustmentMinVelocityZ = 0.3f;    // velocity.zが最低速度時の、Y方向に付与する重力に加える補正値
+    float GravityZAdjustmentAdd = 0.1f;             // 下向き時の、前方向に付与する重力に加える補正値
+    float GravityZAdjustmentSub = 0.1f;             // 上向き時の、前方向に付与する重力に加える補正値
 };

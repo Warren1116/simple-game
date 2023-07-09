@@ -139,7 +139,7 @@ void Player::DrawDebugGUI() {
 
     if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None)) {
         // トランスフォーム
-        if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
+        if (ImGui::CollapsingHeader("Transform")) {
             // 位置
             ImGui::InputFloat3("Position", &position.x);
             // 回転
@@ -154,30 +154,74 @@ void Player::DrawDebugGUI() {
             // スケール
             ImGui::InputFloat3("Scale", &scale.x);
         }
-        if (ImGui::CollapsingHeader("Movement", ImGuiTreeNodeFlags_DefaultOpen)) {
+        if (ImGui::CollapsingHeader("Movement")) {
             // MoveSpeed
             ImGui::InputFloat("Acceleration", &acceleration);
+            // MaxAcceleSpeed
+            ImGui::InputFloat("MaxAcceleSpeed", &MaxAcceleSpeed);
+            // MinAcceleSpeed
+            ImGui::InputFloat("MinAcceleSpeed", &MinAcceleSpeed);
             // TurnSpeed
             ImGui::InputFloat("TurnSpeed", &turnSpeed);
-            // JumpSpeed
-            ImGui::InputFloat("JumpSpeed", &jumpSpeed);
-            // Gravity
-            ImGui::InputFloat("Gravity", &gravity);
             // Velocity
             ImGui::InputFloat3("Velocity", &velocity.x);
+            // MinVelocityZ
+            ImGui::InputFloat("MinVelocityZ", &MinVelocityZ);
         }
-        if (ImGui::CollapsingHeader("FuelDebug", ImGuiTreeNodeFlags_DefaultOpen)) {
+        if (ImGui::CollapsingHeader("FuelDebug")) {
             // AddSpeed
-            ImGui::InputFloat("AddSpeed", &addSpeedEnergy);
+            ImGui::InputFloat("AddAcceleSpeed", &addSpeedEnergy);
             // SubSpeed
-            ImGui::InputFloat("SubSpeed", &subSpeedEnergy);
+            ImGui::InputFloat("SubAcceleSpeed", &subSpeedEnergy);
             // Fuel
             ImGui::InputFloat("Fuel", &fuel);
             // SubFuelSpeed
             ImGui::InputFloat("SubFuelSpeed", &subFuelEnergy);
         }
-
-
+        if (ImGui::CollapsingHeader("DeathParameter")) {
+            float dyingAx;
+            dyingAx = DirectX::XMConvertToDegrees(DyingAngleX);
+            // DeathFallAdjustment
+            ImGui::InputFloat("DeathFallAdjustment", &DeathFallAdjustment);
+            // DeathTimer
+            ImGui::InputInt("DeathTimer", &deathTimer);
+            // DyingAngleX
+            ImGui::InputFloat("DyingAngleX", &dyingAx);
+            DyingAngleX = DirectX::XMConvertToRadians(dyingAx);
+            // DeathRotateAdjustment
+            ImGui::InputFloat("DeathRotateAdjustment", &DeathRotateAdjustment);
+        }
+        if (ImGui::CollapsingHeader("GravityParameter")) {
+            // Gravity
+            ImGui::InputFloat("Gravity", &gravity);
+            // GravityYAdjustmentNormal
+            ImGui::InputFloat("GravityYAdjustmentNormal", &GravityYAdjustmentNormal);
+            // GravityYAdjustmentMinVelocityZ
+            ImGui::InputFloat("GravityYAdjustmentMinVelocityZ", &GravityYAdjustmentMinVelocityZ);
+            // GravityZAdjustmentAdd
+            ImGui::InputFloat("GravityZAdjustmentAdd", &GravityZAdjustmentAdd);
+            // GravityZAdjustmentSub
+            ImGui::InputFloat("GravityZAdjustmentSub", &GravityZAdjustmentSub);
+        }
+        if (ImGui::CollapsingHeader("RotationParameter")) {
+            float ayMax, ayMin, axMax, axMin, turnSpeed;
+            ayMax = DirectX::XMConvertToDegrees(AngleMaxY);
+            ayMin = DirectX::XMConvertToDegrees(AngleMinY);
+            axMax = DirectX::XMConvertToDegrees(AngleMaxX);
+            axMin = DirectX::XMConvertToDegrees(AngleMinX);
+            // AngleMaxY
+            ImGui::InputFloat("AngleMaxY", &ayMax);
+            AngleMaxY = DirectX::XMConvertToRadians(ayMax);
+            // AngleMinY
+            ImGui::InputFloat("AngleMinY", &ayMin);
+            AngleMinY = DirectX::XMConvertToRadians(ayMin);
+            // AngleMaxX
+            ImGui::InputFloat("AngleMaxX", &axMax);
+            AngleMaxX = DirectX::XMConvertToRadians(axMax);
+            // AngleMinX
+            ImGui::InputFloat("AngleMinX", &axMin);
+            AngleMinX = DirectX::XMConvertToRadians(axMin);
+        }
     }
     ImGui::End();
 }
@@ -202,13 +246,13 @@ void Player::InputMove(float elapsedTime) {
     ChackHasSpeed();
 
     // 速度調整処理
-    ChackMoveSpeed(elapsedTime);
+    ChangeSpeed(elapsedTime);
 
     // 移動処理
     MoveFront(moveVec, moveSpeed);
 
     // 入力回転処理
-    if (hasSpeed) InputTurn(elapsedTime, moveVec, turnSpeed);
+    InputTurn(elapsedTime, moveVec, turnSpeed);
 }
 
 void Player::CollisionPlayerVsEnemies() {
@@ -261,70 +305,85 @@ void Player::MoveFront(DirectX::XMFLOAT3 direction, float speed) {
 void Player::InputTurn(float elapsedTime, DirectX::XMFLOAT3 direction, float speed) {
     speed *= elapsedTime;
 
-    // 入力情報を取得
-    GamePad& gamePad = Input::Instance().GetGamePad();
-    float ax = gamePad.GetAxisLX();
-    float ay = gamePad.GetAxisLY();
+    if (hasSpeed) {
+        // 入力情報を取得
+        GamePad& gamePad = Input::Instance().GetGamePad();
+        float ax = gamePad.GetAxisLX();
+        float ay = gamePad.GetAxisLY();
 
-    //// 内積値は-1.0～1.0で表現されており、2つの単位ベクトルの角度が
-    //// 小さいほど1.0に近づくという性質を利用して回転速度を調整する
-    //float rot = 1.0 - dot; // 補正値
-    //if (rot > speed) rot = speed;
+        //// 内積値は-1.0～1.0で表現されており、2つの単位ベクトルの角度が
+        //// 小さいほど1.0に近づくという性質を利用して回転速度を調整する
+        //float rot = 1.0 - dot; // 補正値
+        //if (rot > speed) rot = speed;
 
-    angle.x -= ay * speed;
-    angle.y += ax * speed;
+        angle.x -= ay * speed;
+        angle.y += ax * speed;
 
-    //if (angle.y < AngleMinY) {
-    //    angle.y = AngleMinY;
-    //}
+        if (angle.y < AngleMinY) {
+            angle.y = AngleMinY;
+        }
 
-    //if (angle.y > AngleMaxY) {
-    //    angle.y = AngleMaxY;
-    //}
+        if (angle.y > AngleMaxY) {
+            angle.y = AngleMaxY;
+        }
 
-    //if (angle.x <= AngleMinX) {
-    //    angle.x = AngleMinX;
-    //}
+        // 上下制限
+        if (angle.x <= AngleMinX) {
+            angle.x = AngleMinX;
+        }
 
-    //if (angle.x >= AngleMaxX) {
-    //    angle.x = AngleMaxX;
-    //}
-}
-
-void Player::ChackMoveSpeed(float elapsedTime) {
-    float addSpeed = addSpeedEnergy * elapsedTime;
-    float subSpeed = subSpeedEnergy * elapsedTime;
-    float subFuel = subFuelEnergy * elapsedTime;
-    if (fuelUse && fuel > 0) {
-        this->acceleration += addSpeed;
-        moveSpeed += addSpeed;
-        fuel -= subFuel;
+        if (angle.x >= AngleMaxX) {
+            angle.x = AngleMaxX;
+        }
     }
     else {
-        moveSpeed -= subSpeed;
-        if (moveSpeed < 0) {
-            moveSpeed = 0;
+        angle.x += speed * DeathRotateAdjustment;
+        if (angle.x >= DyingAngleX) angle.x = DyingAngleX;
+    }
+}
+
+void Player::ChangeSpeed(float elapsedTime) {
+    if (fuelUse) {
+        float subFuel = subFuelEnergy * elapsedTime;
+        fuel -= subFuel;
+        if (fuel > 0) {
+            float addSpeed = addSpeedEnergy * elapsedTime;
+            acceleration += addSpeed;
+            if (acceleration > MaxAcceleSpeed) acceleration = MaxAcceleSpeed;
+        }
+    }
+    else {
+        if (onSubSpeed) {
+            float subSpeed = subSpeedEnergy * elapsedTime;
+            acceleration += subSpeed;
+            if (acceleration < MinAcceleSpeed) acceleration = MinAcceleSpeed;
         }
     }
 }
 
 void Player::ChackHasSpeed() {
-    if (moveSpeed > 0) hasSpeed = true;
-    else hasSpeed = false;
-
+    if (acceleration > MinAcceleSpeed) {
+        hasSpeed = true;
+        onAddSpeed = true;
+        deathSpeed = 0.0f;
+    }
+    else {
+        hasSpeed = false;
+        onAddSpeed = false;
+    }
 }
 
 void Player::ChackUseFuel() {
     GamePad& gamePad = Input::Instance().GetGamePad();
     const GamePadButton space = GamePad::BTN_SPACE;
+
     if (gamePad.GetButtonDown() & space)
     {
         fuelUse = true;
+        onAddSpeed = true;
     }
-    else if (gamePad.GetButtonUp() & space)
-    {
-        fuelUse = false;
-    }
+    else if (gamePad.GetButtonUp() & space) fuelUse = false;
+
     if (fuelUse && fuel > 0)
     {
         DirectX::XMFLOAT3 pos = this->GetPosition();
@@ -348,4 +407,110 @@ void Player::DrawOver(ID3D11DeviceContext* dc)
         0, 0, 1135, 150,
         0,
         1, 1, 1, 1);
+}
+
+void Player::UpdateVerticalVelocity(float elapsedFrame) {
+    // 燃料を使っていなければ縦に重力を加える
+    if (!fuelUse) {
+        if (hasSpeed) {
+            float speed = gravity * elapsedFrame;
+
+            if (velocity.z > MinVelocityZ) velocity.y += speed * GravityYAdjustmentNormal;
+            else if (velocity.z <= MinVelocityZ) velocity.y += speed * GravityYAdjustmentMinVelocityZ;
+        }
+        else {
+            deathSpeed += gravity * elapsedFrame;
+            velocity.y += deathSpeed * DeathFallAdjustment;
+        }
+    }
+}
+
+void Player::UpdateHorizontalVelocity(float elapsedFrame) {
+
+    if (!fuelUse) GravityAdjust(elapsedFrame);
+
+    //XZ平面の速力を減速する
+    float length = sqrtf(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
+
+    if (length > 0.0f)
+    {
+        //摩擦力
+        float friction = this->friction * elapsedFrame;
+
+        friction *= airControl;
+
+        //摩擦による横方向の減速処理
+        if (length > friction)
+        {
+            //単位ベクトル化
+            float vx = velocity.x / length;
+            float vy = velocity.y / length;
+            float vz = velocity.z / length;
+
+            velocity.x -= vx * friction;
+            velocity.y -= vy * friction;
+            velocity.z -= vz * friction;
+            if (velocity.z < MinVelocityZ) velocity.z = MinVelocityZ;
+        }
+        //横方向の速力が摩擦力以下になったので速力を無効化
+        else
+        {
+            velocity.x = 0.0f;
+            velocity.y = 0.0f;
+            velocity.z = MinVelocityZ;
+        }
+    }
+    //XZ平面の速力を加速する
+    if (length <= maxMoveSpeed)
+    {
+        float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecY * moveVecY + moveVecZ * moveVecZ);
+
+        if (moveVecLength > 0.0f)
+        {
+            float acceleration = this->acceleration * elapsedFrame;
+
+            velocity.x += moveVecX * acceleration;
+            velocity.y += moveVecY * acceleration;
+            velocity.z += moveVecZ * acceleration;
+
+            float length = sqrtf(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
+            if (length > maxMoveSpeed)
+            {
+                float vx = velocity.x / length;
+                float vy = velocity.y / length;
+                float vz = velocity.z / length;
+                velocity.x = vx * maxMoveSpeed;
+                velocity.y = vy * maxMoveSpeed;
+                velocity.z = vz * maxMoveSpeed;
+            }
+        }
+    }
+    moveVecX = 0.0f;
+    moveVecY = 0.0f;
+    moveVecZ = 0.0f;
+}
+
+// 重力による加減速
+void Player::GravityAdjust(float elapsedFrame) {
+
+    float rotate = sinf(angle.x - DirectX::XMConvertToRadians(90));
+    float speed = gravity * elapsedFrame;
+    float rot = 1.0f - rotate;
+    // 下向き
+    if (rotate > 0 && onAddSpeed) velocity.z -= speed * rot * GravityZAdjustmentAdd;
+    // 上向き
+    else if (rotate < 0 && velocity.z > MinVelocityZ) velocity.z += speed * rot * GravityZAdjustmentSub;
+
+    // 下向き
+    if (rotate > 0 && onAddSpeed) {
+        onSubSpeed = true;
+        acceleration -= speed * rot * GravityZAdjustmentAdd;
+    }
+    if (rotate == 0) onSubSpeed = true;
+    // 上向き
+    else if (rotate < 0 && acceleration > MinAcceleSpeed) {
+        onSubSpeed = false;
+        acceleration += speed * rot * GravityZAdjustmentSub;
+        if (acceleration < MinAcceleSpeed) acceleration = MinAcceleSpeed;
+    }
 }
