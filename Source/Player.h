@@ -39,6 +39,9 @@ public:
     // €–Sæ“¾
     bool GetDead() const { return isDead; }
 
+    // ƒNƒŠƒA”»’èæ“¾
+    bool GetClear() const { return ishitEnemy; }
+
 protected:
     // ’…’n‚µ‚½‚ÉŒÄ‚Î‚ê‚é
     void OnLanding() override;
@@ -111,8 +114,8 @@ private:
     float AngleMaxY = DirectX::XMConvertToRadians(70);  // ‰E‰ñ“]§ŒÀ
     float AngleMinY = DirectX::XMConvertToRadians(-70); // ¶‰ñ“]§ŒÀ
     // X²‰ñ“]§ŒÀ
-    float AngleMaxX = DirectX::XMConvertToRadians(115); // ‰º‰ñ“]§ŒÀ
-    float AngleMinX = DirectX::XMConvertToRadians(75);  // ã‰ñ“]§ŒÀ
+    float AngleMaxX = DirectX::XMConvertToRadians(160); // ‰º‰ñ“]§ŒÀ
+    float AngleMinX = DirectX::XMConvertToRadians(20);  // ã‰ñ“]§ŒÀ
     // ‘¬—Í‚ª‚È‚¢‚Æ‚«‚ÉŒü‚­Šp“x
     float DyingAngleX = DirectX::XMConvertToRadians(120);
 

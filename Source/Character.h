@@ -47,6 +47,7 @@ public:
     // 地面に接地しているか
     bool IsGround() const { return isGround; }
 
+    void CheckWallCollision();
 private:
     // 垂直移動更新処理
     void UpdateVerticalMove(float elapsedTime);
@@ -54,7 +55,7 @@ private:
     // 水平移動更新処理
     void UpdateHorizontalMove(float elapsedTime);
 
-    void CheckWallCollision();
+  
 
     void PlaySE();
 
@@ -75,6 +76,7 @@ protected:
 
     bool IsDead() const { return isDead; }
 
+   
 
 protected:
     DirectX::XMFLOAT3 position = { 0,0,0 };

@@ -19,7 +19,7 @@ Player::Player() {
     position.y = 60.0f;
     position.z = -600.0f;
     angle.x = DirectX::XMConvertToRadians(90);
-
+    height = 0.5f;
     //hitEffect = std::make_unique<Effect>("Data/Effect/Explosion.efk");
     flyEffect = std::make_unique<Effect>("Data/Effect/engine0.1.efk");
 
@@ -64,8 +64,8 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
             effectcount--;
         }
 
-        timer--;    //count down 3sec
-        if (timer <= 0)
+        deathTimer--;    //count down 3sec
+        if (deathTimer <= 0)
         {
             DrawClear(dc);
             GamePad& gamePad = Input::Instance().GetGamePad();
@@ -90,8 +90,8 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
             hitEffect->Play(this->GetPosition());
             effectcount--;
         }
-        timer--;    //count down 3sec
-        if (timer <= 0)
+        deathTimer--;    //count down 3sec
+        if (deathTimer <= 0)
         {
             DrawOver(dc);
             GamePad& gamePad = Input::Instance().GetGamePad();
@@ -126,7 +126,7 @@ void Player::DrawDebugPrimitive() {
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 
     // 衝突判定用のデバッグ球を描画
-    debugRenderer->DrawCylinder(position, radius,height, DirectX::XMFLOAT4(0, 0, 0, 1));
+    debugRenderer->DrawCylinder({ position.x, position.y - 0.25f, position.z }, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
 
     // 弾丸デバッグプリミティブ描画
     projectileManager.DrawDebugPrimitive();
@@ -245,6 +245,7 @@ void Player::InputMove(float elapsedTime) {
     // 速度があるか
     ChackHasSpeed();
 
+    if(!isDead)
     // 速度調整処理
     ChangeSpeed(elapsedTime);
 
@@ -266,8 +267,8 @@ void Player::CollisionPlayerVsEnemies() {
         // 衝突処理
         DirectX::XMFLOAT3 outPosition;
         if (Collision::IntersectCylinderVsCylinder (
-            this->GetPosition(), this->GetRadius(),this->GetHeight(),
-            enemy->GetPosition(), enemy->GetRadius(), enemy->GetHeight(),
+            { this->GetPosition().x, this->GetPosition().y + 0.25f ,this->GetPosition().z }, this->GetRadius(), this->GetHeight(),
+            { enemy->GetPosition().x, enemy->GetPosition().y + 12.0f, enemy->GetPosition().z }, enemy->GetRadius(), enemy->GetHeight(),
             outPosition)) {
             float enemyHeight = enemy->GetPosition().y + enemy->GetHeight();
             float playerHeight = this->GetPosition().y + this->GetHeight();
@@ -278,8 +279,10 @@ void Player::CollisionPlayerVsEnemies() {
             // 押し出し後の位置設定
             else enemy->SetPosition(outPosition);
             hitEffect->Play(this->GetPosition());
+            enemy->CheckWallCollision();
             model = nullptr;
-            
+            isDead = true;
+            ishitEnemy = true;
         }
     }
 }

@@ -5,11 +5,11 @@ EnemySlime::EnemySlime() {
     model = new Model("Data/Model/G/G.mdl");
 
     // モデルが大きいのでスケーリング
-    scale.x = scale.y = scale.z = 0.01f;
+    scale.x = scale.y = scale.z = 5.0f;
 
     // 幅、高さ設定
-    radius = 0.5f;
-    height = 1.0f;
+    radius = 10.0f;
+    height = 5.0f;
 }
 
 // デストラクタ
@@ -26,10 +26,10 @@ void EnemySlime::Update(float elapsedTime) {
     UpdateTransform();
 
     // モデル行列更新
-    model->UpdateTransform(transform);
+    if(model != nullptr) model->UpdateTransform(transform);
 }
 
 // 描画処理
 void EnemySlime::Render(ID3D11DeviceContext* dc, Shader* shader) {
-    shader->Draw(dc, model);
+    if (model != nullptr) shader->Draw(dc, model);
 }

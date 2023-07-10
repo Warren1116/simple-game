@@ -24,7 +24,7 @@ void SceneGame::Initialize()
 		DirectX::XMFLOAT3(0, 10, -10),
 		DirectX::XMFLOAT3(0, 0, 0),
 		DirectX::XMFLOAT3(0, 1, 0)
-		);
+	);
 	camera.SetPerspectiveFov(DirectX::XMConvertToRadians(45),
 		graphics.GetScreenWidth() / graphics.GetScreenHeight(),
 		0.1f,
@@ -35,11 +35,11 @@ void SceneGame::Initialize()
 	cameraController->SetCameraType(cameraController->CameraType1);
 
 	// エネミー初期化
-	for (int i = 0; i < 2; ++i) {
-		EnemySlime* slime = new EnemySlime();
-		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-		EnemyManager::Instance().Register(slime);
-	}
+
+	EnemySlime* slime = new EnemySlime();
+	slime->SetPosition(DirectX::XMFLOAT3(50.0f, 118.0f - 12.0f, 382.0f));
+	EnemyManager::Instance().Register(slime);
+
 }
 
 // 終了化

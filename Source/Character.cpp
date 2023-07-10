@@ -188,17 +188,27 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 				position.z = hit2.position.z;
 			}
 
-			if (isStop)isDead = true;
+			if (isStop) isDead = true;
 		}
 		// 天井判定（仮）
 		else if (position.y >= 150.7f)
 		{
 			position.y = 150.7f;
+			if (stopcounter > 0)
+			{
+				stopcounter--;
+				isStop = true;
+				return;
+			}
 			if (counter > 0)
 			{
+
 				PlaySE();
 				counter--;
 			}
+
+			velocity = {};
+			CheckWallCollision();
 		}
 		else
 		{
@@ -274,16 +284,20 @@ void Character::UpdateVelocity(float elapsedTime)
 {
 	// 経過フレーム
 	float elapsedFrame = 60.0f * elapsedTime;
+	if (!isDead)
+	{
+		// 垂直速力更新処理
+		UpdateVerticalVelocity(elapsedFrame);
 
-	// 垂直速力更新処理
-	UpdateVerticalVelocity(elapsedFrame);
+		UpdateHorizontalVelocity(elapsedFrame);
 
-	UpdateHorizontalVelocity(elapsedFrame);
 
-	
-	// 垂直移動更新処理
-	UpdateVerticalMove(elapsedTime);
-	UpdateHorizontalMove(elapsedTime);
+		// 垂直移動更新処理
+		UpdateVerticalMove(elapsedTime);
+		UpdateHorizontalMove(elapsedTime);
 
-	
+
+		
+	}
+	else velocity.x = velocity.y = velocity.z = 0.0f;
 }
