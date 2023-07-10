@@ -2,7 +2,7 @@
 
 // コンストラクタ
 EnemySlime::EnemySlime() {
-    model = new Model("Data/Model/Slime/Slime.mdl");
+    model = new Model("Data/Model/G/G.mdl");
 
     // モデルが大きいのでスケーリング
     scale.x = scale.y = scale.z = 0.01f;

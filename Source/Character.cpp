@@ -55,12 +55,12 @@ void Character::UpdateVerticalMove(float elapsedTime)
 				PlaySE();
 				counter--;
 			}
-			isDead = true;
+			
 			velocity = {};
 			CheckWallCollision();
 		}
 
-
+		if (isStop)isDead = true;
 	
 }
 
@@ -178,7 +178,7 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 					PlaySE();
 					counter--;
 				}
-				isDead = true;
+				
 				velocity = {};
 				CheckWallCollision();
 			}
@@ -188,7 +188,7 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 				position.z = hit2.position.z;
 			}
 
-			
+			if (isStop)isDead = true;
 		}
 		// “Vˆä”»’èi‰¼j
 		else if (position.y >= 150.7f)
