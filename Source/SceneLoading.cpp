@@ -7,6 +7,7 @@
 void SceneLoading::Initialize() {
     // スプライト初期化
     sprite = new Sprite("Data/Sprite/LoadingIcon.png");
+    tutorial = new Sprite("Data/Sprite/cyutoriaru.png");
 
     // スレッド開始
     thread = new std::thread(SceneLoading::LoadingThread, this); // threadを起動する際はスレッド用関数とインスタンスのthisポインタを引数に渡す
@@ -34,8 +35,15 @@ void SceneLoading::Update(float elapsedTime) {
     constexpr float speed = 180;
     angle += speed * elapsedTime;
 
-    // 次のシーンの準備が完了したらシーンを切り替える
-    if (nextScene->IsReady()) {
+    // 次のシーンの準備が完了したときになにかボタンを押したらシーンを切り替える
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    const GamePadButton anyButton =
+        GamePad::BTN_A |
+        GamePad::BTN_B |
+        GamePad::BTN_X |
+        GamePad::BTN_Y;
+
+    if (nextScene->IsReady() && (gamePad.GetButtonDown() & anyButton)) {
         SceneManager::Instance().ChangeScene(nextScene);
         nextScene = nullptr;
     }
@@ -56,19 +64,32 @@ void SceneLoading::Render() {
 
     //2Dスプライト描画
     {
-        // 画面右下にローディングアイコンを描画
         float screenWidth = static_cast<float>(graphics.GetScreenWidth());
         float screenHeight = static_cast<float>(graphics.GetScreenHeight());
-        float textureWidth = static_cast<float>(sprite->GetTextureWidth());
-        float textureHeight = static_cast<float>(sprite->GetTextureHeight());
+        float textureWidth = static_cast<float>(tutorial->GetTextureWidth());
+        float textureHeight = static_cast<float>(tutorial->GetTextureHeight());
+
+        tutorial->Render(dc,
+            0, 0, screenWidth, screenHeight,
+            0, 0, textureWidth, textureHeight,
+            0,
+            1, 1, 1, 1);
+
+        textureWidth = static_cast<float>(sprite->GetTextureWidth());
+        textureHeight = static_cast<float>(sprite->GetTextureHeight());
         float positionX = screenWidth - textureWidth;
         float positionY = screenHeight - textureHeight;
 
-        sprite->Render(dc,
-            positionX, positionY, textureWidth, textureHeight,
-            0, 0, textureWidth, textureHeight,
-            angle,
-            1, 1, 1, 1);
+
+        // 画面右下にローディングアイコンを描画
+        if (nextScene != nullptr && !nextScene->IsReady())
+        {
+            sprite->Render(dc,
+                positionX, positionY, textureWidth, textureHeight,
+                0, 0, textureWidth, textureHeight,
+                angle,
+                1, 1, 1, 1);
+        }
     }
 
 }

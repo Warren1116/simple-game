@@ -33,6 +33,12 @@ public:
     // ”R—¿Žæ“¾
     float GetFuel() const { return fuel; }
 
+    // ’âŽ~‚·‚é‚©
+    bool GetStop() const { return isStop; }
+
+    // Ž€–SŽæ“¾
+    bool GetDead() const { return isDead; }
+
 protected:
     // ’…’n‚µ‚½Žž‚ÉŒÄ‚Î‚ê‚é
     void OnLanding() override;

@@ -43,7 +43,13 @@ void Character::UpdateVerticalMove(float elapsedTime)
 			// ’n–Ê‚ÉÚ’n‚µ‚Ä‚¢‚é
 			position.y = hit.position.y;
 
-			velocity.y = hit.position.y;
+			velocity.y = 0.0f;
+			if (stopcounter > 0)
+			{
+				stopcounter--;
+				isStop = true;
+				return;
+			}
 			if (counter > 0)
 			{
 				PlaySE();
@@ -160,8 +166,15 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 				// •Ç‚¸‚è•ûŒü‚Å•Ç‚É“–‚½‚ç‚È‚©‚Á‚½‚ç•â³ˆÊ’u‚ÉˆÚ“®
 				position.x = collectPosition.x;
 				position.z = collectPosition.z;
+				if (stopcounter > 0)
+				{
+					stopcounter--;
+					isStop = true;
+					return;
+				}
 				if (counter > 0)
 				{
+					
 					PlaySE();
 					counter--;
 				}

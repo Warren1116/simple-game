@@ -102,8 +102,10 @@ protected:
     float moveVecZ = 0.0f;
     float airControl = 0.3f;
     bool isDead = false;//Ž€–S”»’è
+    bool isStop = false;
     int timer = 0.0f;
     int counter = 1;
+    int stopcounter = 1;
     std::unique_ptr<Model> model;
     std::unique_ptr<Effect> hitEffect = nullptr;
     std::unique_ptr<AudioSource>se_explosion = nullptr;

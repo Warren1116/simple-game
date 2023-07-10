@@ -5,7 +5,7 @@ static Stage* instance = nullptr;
 // コンストラクタ
 Stage::Stage() {
     // ステージモデルを読み込み
-	model = new Model("Data/Model/Stage/Stage_kari.mdl");
+	model = new Model("Data/Model/Stage/Stage.mdl");
     instance = this;
 
 	scale.x = scale.y = scale.z = 1.0f;

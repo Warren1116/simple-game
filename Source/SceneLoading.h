@@ -28,6 +28,7 @@ private:
 
 private:
     Sprite* sprite = nullptr;
+    Sprite* tutorial = nullptr;
     float angle = 0.0f;
     Scene* nextScene = nullptr;
     std::thread* thread = nullptr;

@@ -73,9 +73,27 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
+	// 死亡時少し止める
+	{
+		if (player->GetStop()) 
+		{
+			stopTimer--;
+			if (stopTimer > 0) return;
+		}
+	}
 	// カメラコントローラー更新処理
 	DirectX::XMFLOAT3 target = player->GetPosition();
 	target.y += 0.5f;
+	// 死亡時画面揺らし
+	if (player->GetDead())
+	{
+		int ShakeTimer = -1 * stopTimer;
+		if (ShakeTimer % 5 == 0 && ShakeTimer < 21)
+		{
+			target.x += 1.0f;
+			target.y += 1.0f;
+		}
+	}
 	cameraController->SetTarget(target);
 	if (cameraController->GetCameraType() == cameraController->CameraType2) {
 		DirectX::XMFLOAT3 direction = { player->GetTransform()._21, player->GetTransform()._22,player->GetTransform()._23 };
