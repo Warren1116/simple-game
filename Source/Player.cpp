@@ -388,7 +388,7 @@ void Player::ChackUseFuel() {
     if (gamePad.GetButtonDown() & space) fuelUse = true;
     else if (gamePad.GetButtonUp() & space) fuelUse = false;
 
-    if (fuelUse && fuel > 0)
+    if (fuelUse && fuel > 0 && IsDead() == false)
     {
         //onAddSpeed = true;
         DirectX::XMFLOAT3 pos = this->GetPosition();
