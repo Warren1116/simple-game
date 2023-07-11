@@ -6,5 +6,5 @@ void Enemy::DrawDebugPrimitive() {
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 
     // 衝突判定用のデバック球を描画
-    debugRenderer->DrawCylinder({ position.x, position.y + 12.0f, position.z }, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
+    debugRenderer->DrawCylinder({ position.x, position.y, position.z }, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
 }

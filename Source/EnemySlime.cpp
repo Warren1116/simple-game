@@ -5,11 +5,11 @@ EnemySlime::EnemySlime() {
     model = new Model("Data/Model/G/G.mdl");
 
     // モデルが大きいのでスケーリング
-    scale.x = scale.y = scale.z = 5.0f;
+    scale.x = scale.y = scale.z = 1.0f;
 
     // 幅、高さ設定
-    radius = 10.0f;
-    height = 5.0f;
+    radius = 2.0f;
+    height = 1.0f;
 }
 
 // デストラクタ
