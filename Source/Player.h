@@ -132,4 +132,7 @@ private:
     float GravityYAdjustmentMinVelocityZ = 0.3f;    // velocity.zが最低速度時の、Y方向に付与する重力に加える補正値
     float GravityZAdjustmentAdd = 0.1f;             // 下向き時の、前方向に付与する重力に加える補正値
     float GravityZAdjustmentSub = 0.1f;             // 上向き時の、前方向に付与する重力に加える補正値
+
+    float screenWidth = static_cast<float>(1280.0f);
+    float screenHeight = static_cast<float>(720.0f);
 };

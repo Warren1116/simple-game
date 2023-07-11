@@ -166,26 +166,26 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
-		float screenWidth = static_cast<float>(700.0f);
-		float screenHeight = static_cast<float>(45.0f);
+		float screenWidth = static_cast<float>(1280.0f);
+		float screenHeight = static_cast<float>(720.0f);
 		float textureWidth = static_cast<float>(sprite_gauge->GetTextureWidth());
 		float textureHeight = static_cast<float>(sprite_gauge->GetTextureHeight());
 		// ゲージスプライト描画
 		sprite_gauge->Render(dc,
-			275.0f, 600.0f, screenWidth, screenHeight,
+			screenWidth * 0.3f, screenHeight, 700, 45,
 			0, 0, textureWidth, textureHeight,
 			0,
 			1, 1, 1, 1);
 
 		if (player->GetFuel() >= 0.0f)
 		{
-			screenWidth = static_cast<float>((player->GetFuel() / 100) * 690.0f);
-			screenHeight = static_cast<float>(39.0f);
+			float screenWidth = static_cast<float>(1280.0f);
+			float screenHeight = static_cast<float>(720.0f);
 			textureWidth = static_cast<float>(sprite_in_gauge->GetTextureWidth());
 			textureHeight = static_cast<float>(sprite_in_gauge->GetTextureHeight());
 			// ゲージスプライト描画
 			sprite_in_gauge->Render(dc,
-				280.0f, 603.0f, screenWidth, screenHeight,
+				screenWidth * 0.3f + 5, screenHeight + 3, (player->GetFuel() / 100) * 690.0f, 39,
 				0, 0, textureWidth, textureHeight,
 				0,
 				1, 1, 1, 1);

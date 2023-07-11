@@ -391,7 +391,7 @@ void Player::ChackUseFuel() {
 void Player::DrawClear(ID3D11DeviceContext* dc)
 {
     spriteGameclear->Render(dc,
-        300, 200, 1280 * 0.5f, 720 * 0.25,
+        screenWidth * 0.35f, screenHeight * 0.25, screenWidth * 0.5f, 200,
         0, 0, 1270, 150,
         0,
         1, 1, 1, 1);
@@ -399,9 +399,9 @@ void Player::DrawClear(ID3D11DeviceContext* dc)
 
 void Player::DrawOver(ID3D11DeviceContext* dc)
 {
-    spriteGameover->Render(dc,
-        300, 200, 1280 * 0.5f, 720 * 0.25,
-        0, 0, 1135, 150,
+    spriteGameclear->Render(dc,
+        screenWidth * 0.35f, screenHeight * 0.25, screenWidth * 0.5f, 200,
+        0, 0, 1270, 150,
         0,
         1, 1, 1, 1);
 }
