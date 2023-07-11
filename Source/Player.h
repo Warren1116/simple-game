@@ -120,7 +120,7 @@ private:
     // ‘¬—Í‚ª‚È‚¢‚Æ‚«‚ÉŒü‚­Šp“x
     float DyingAngleX = DirectX::XMConvertToRadians(120);
 
-    float MaxAcceleSpeed = 60.0f;
+    float MaxAcceleSpeed = 40.0f;
     float MinAcceleSpeed = 0.0f;
     float MinVelocityZ = 15.0f;
 

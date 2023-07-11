@@ -37,11 +37,7 @@ void SceneLoading::Update(float elapsedTime) {
 
     // 次のシーンの準備が完了したときになにかボタンを押したらシーンを切り替える
     GamePad& gamePad = Input::Instance().GetGamePad();
-    const GamePadButton anyButton =
-        GamePad::BTN_A |
-        GamePad::BTN_B |
-        GamePad::BTN_X |
-        GamePad::BTN_Y;
+    const GamePadButton anyButton = GamePad::BTN_ENTER;
 
     if (nextScene->IsReady() && (gamePad.GetButtonDown() & anyButton)) {
         SceneManager::Instance().ChangeScene(nextScene);

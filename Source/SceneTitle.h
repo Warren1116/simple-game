@@ -24,5 +24,6 @@ public:
 
 private:
     Sprite* sprite = nullptr;
+    Model* model = nullptr;
     std::unique_ptr<AudioSource>bgm = nullptr;
 };

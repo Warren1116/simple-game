@@ -73,11 +73,7 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
             GamePad& gamePad = Input::Instance().GetGamePad();
 
             // なにかボタンを押したらローディングシーンへ切り替え
-            const GamePadButton anyButton =
-                GamePad::BTN_A |
-                GamePad::BTN_B |
-                GamePad::BTN_X |
-                GamePad::BTN_Y;
+            const GamePadButton anyButton = GamePad::BTN_ENTER;
 
             if (gamePad.GetButtonDown() & anyButton) {
                 SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
@@ -99,11 +95,7 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
             GamePad& gamePad = Input::Instance().GetGamePad();
 
             // なにかボタンを押したらローディングシーンへ切り替え
-            const GamePadButton anyButton =
-                GamePad::BTN_A |
-                GamePad::BTN_B |
-                GamePad::BTN_X |
-                GamePad::BTN_Y;
+            const GamePadButton anyButton = GamePad::BTN_ENTER;
 
             if (gamePad.GetButtonDown() & anyButton) {
                 SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
