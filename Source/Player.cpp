@@ -7,7 +7,9 @@
 #include "Input/Input.h"
 #include "Graphics/Graphics.h"
 #include "SceneManager.h"
+#include "SceneLoading.h"
 #include "SceneTitle.h"
+#include "SceneGame.h"
 
 
 // コンストラクタ
@@ -78,7 +80,7 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
                 GamePad::BTN_Y;
 
             if (gamePad.GetButtonDown() & anyButton) {
-                SceneManager::Instance().ChangeScene(new SceneTitle);
+                SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
             }
         }
 
@@ -104,7 +106,7 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
                 GamePad::BTN_Y;
 
             if (gamePad.GetButtonDown() & anyButton) {
-                SceneManager::Instance().ChangeScene(new SceneTitle);
+                SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
             }
         }
     }
@@ -308,7 +310,7 @@ void Player::MoveFront(DirectX::XMFLOAT3 direction, float speed) {
 void Player::InputTurn(float elapsedTime, DirectX::XMFLOAT3 direction, float speed) {
     speed *= elapsedTime;
 
-    if (hasSpeed) {
+    if (/*hasSpeed*/fuel > 0) {
         // 入力情報を取得
         GamePad& gamePad = Input::Instance().GetGamePad();
         float ax = gamePad.GetAxisLX();
@@ -340,23 +342,28 @@ void Player::InputTurn(float elapsedTime, DirectX::XMFLOAT3 direction, float spe
         }
     }
     else {
-        angle.x += speed * DeathRotateAdjustment;
-        if (angle.x >= DyingAngleX) angle.x = DyingAngleX;
+        if (angle.x >= DirectX::XMConvertToRadians(45)) {
+            angle.x += speed * DeathRotateAdjustment;
+            if (angle.x >= DyingAngleX) angle.x = DyingAngleX;
+        }
     }
 }
 
 void Player::ChangeSpeed(float elapsedTime) {
-    if (fuelUse) {
+    if (fuelUse && fuel > 0) {
         float subFuel = subFuelEnergy * elapsedTime;
         fuel -= subFuel;
-        if (fuel > 0) {
-            float addSpeed = addSpeedEnergy * elapsedTime;
-            acceleration += addSpeed;
-            if (acceleration > MaxAcceleSpeed) acceleration = MaxAcceleSpeed;
+        onSpeed = true;
+        float addSpeed = addSpeedEnergy * elapsedTime;
+        acceleration += addSpeed;
+        if (acceleration > MaxAcceleSpeed) acceleration = MaxAcceleSpeed;
+        if (fuel < 0) {
+            fuel = 0;
+            onSpeed = false;
         }
     }
     else {
-        if (onSubSpeed) {
+        if (onSpeed) {
             float subSpeed = subSpeedEnergy * elapsedTime;
             acceleration += subSpeed;
             if (acceleration < MinAcceleSpeed) acceleration = MinAcceleSpeed;
@@ -367,12 +374,10 @@ void Player::ChangeSpeed(float elapsedTime) {
 void Player::ChackHasSpeed() {
     if (acceleration > MinAcceleSpeed) {
         hasSpeed = true;
-        onAddSpeed = true;
         deathSpeed = 0.0f;
     }
     else {
         hasSpeed = false;
-        onAddSpeed = false;
     }
 }
 
@@ -380,15 +385,12 @@ void Player::ChackUseFuel() {
     GamePad& gamePad = Input::Instance().GetGamePad();
     const GamePadButton space = GamePad::BTN_SPACE;
 
-    if (gamePad.GetButtonDown() & space)
-    {
-        fuelUse = true;
-        onAddSpeed = true;
-    }
+    if (gamePad.GetButtonDown() & space) fuelUse = true;
     else if (gamePad.GetButtonUp() & space) fuelUse = false;
 
     if (fuelUse && fuel > 0)
     {
+        //onAddSpeed = true;
         DirectX::XMFLOAT3 pos = this->GetPosition();
         flyEffect->Play(pos);
     }
@@ -496,24 +498,25 @@ void Player::UpdateHorizontalVelocity(float elapsedFrame) {
 // 重力による加減速
 void Player::GravityAdjust(float elapsedFrame) {
 
-    float rotate = sinf(angle.x - DirectX::XMConvertToRadians(90));
+    float rotate = sinf(angle.x - DirectX::XMConvertToRadians(90)); // ロジックの中で90度引いてるのはよくない
     float speed = gravity * elapsedFrame;
-    float rot = 1.0f - rotate;
+    float rot = 1.0f - rotate * 0.8f/* - rotate*/; // ここが問題点
     // 下向き
-    if (rotate > 0 && onAddSpeed) velocity.z -= speed * rot * GravityZAdjustmentAdd;
+    //if (rotate > 0 && onAddSpeed) velocity.z -= speed * rot * GravityZAdjustmentAdd;
     // 上向き
-    else if (rotate < 0 && velocity.z > MinVelocityZ) velocity.z += speed * rot * GravityZAdjustmentSub;
+    //else if (rotate < 0 && velocity.z > MinVelocityZ) velocity.z += speed * rot * GravityZAdjustmentSub;  
 
     // 下向き
-    if (rotate > 0 && onAddSpeed) {
-        onSubSpeed = true;
-        acceleration -= speed * rot * GravityZAdjustmentAdd;
+    if (rotate > DirectX::XMConvertToRadians(0)) {
+        onSpeed = true;
+        acceleration += -speed * rot * 0.5f;
+        if (acceleration > 40) acceleration = 40;
     }
-    if (rotate == 0) onSubSpeed = true;
+    //else if (rotate == DirectX::XMConvertToRadians(0)) onSpeed = false;
     // 上向き
-    else if (rotate < 0 && acceleration > MinAcceleSpeed) {
-        onSubSpeed = false;
-        acceleration += speed * rot * GravityZAdjustmentSub;
+    else/* if (rotate < 0 && acceleration > MinAcceleSpeed)*/ {
+        onSpeed = false;
+        acceleration -= -speed * rot * GravityZAdjustmentSub;
         if (acceleration < MinAcceleSpeed) acceleration = MinAcceleSpeed;
     }
 }

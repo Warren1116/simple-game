@@ -78,8 +78,8 @@ private:
     float jumpSpeed = 20.0f;
     float deathSpeed = 0.0f; // 死んだとき使う
 
-    float addSpeedEnergy = 5.0f; // 速度追加量
-    float subSpeedEnergy = -1.0f; // 速度減少量
+    float addSpeedEnergy = 10.0f; // 速度追加量
+    float subSpeedEnergy = -3.0f; // 速度減少量
     float fuel = 100; // 燃料変数
     float subFuelEnergy = 10; // 燃料減少量
 
@@ -95,8 +95,9 @@ private:
 
     bool fuelUse = false; // 燃料使用しているかどうか
     bool hasSpeed = false; // 速度があるかどうか
-    bool onSubSpeed = false; // 減速させるかどうか
-    bool onAddSpeed = false; // 加速させるかどうか
+    bool onSubSpeed = false; // 減速させるかどうか いるのか怪しい
+    bool onAddSpeed = false; // 加速させるかどうか いるのか怪しい
+    bool onSpeed = false; // true加速、false減速、上二つの合体版
 
     ProjectileManager projectileManager;
     //std::unique_ptr<Model> model;
@@ -121,7 +122,7 @@ private:
 
     float MaxAcceleSpeed = 60.0f;
     float MinAcceleSpeed = 0.0f;
-    float MinVelocityZ = 20.0f;
+    float MinVelocityZ = 15.0f;
 
 private:
     // 補正値変数 初期値は変えないでください変更する際はImGui等でお願いします
