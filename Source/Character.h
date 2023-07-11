@@ -48,6 +48,9 @@ public:
     bool IsGround() const { return isGround; }
 
     void CheckWallCollision();
+
+    bool IsDead() const { return isDead; }
+
 private:
     // ‚’¼ˆÚ“®XVˆ—
     void UpdateVerticalMove(float elapsedTime);
@@ -74,7 +77,6 @@ protected:
     // ’…’n‚µ‚½‚ÉŒÄ‚Î‚ê‚é
     virtual void OnLanding() {}
 
-    bool IsDead() const { return isDead; }
 
    
 
