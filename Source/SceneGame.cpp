@@ -37,7 +37,7 @@ void SceneGame::Initialize()
 	// エネミー初期化
 
 	EnemySlime* slime = new EnemySlime();
-	slime->SetPosition(DirectX::XMFLOAT3(50.0f, 118.0f - 12.0f, 382.0f));
+	slime->SetPosition(DirectX::XMFLOAT3(50.0f, 118.0f, 382.0f));
 	EnemyManager::Instance().Register(slime);
 
 }
@@ -82,19 +82,30 @@ void SceneGame::Update(float elapsedTime)
 		}
 	}
 	// カメラコントローラー更新処理
-	DirectX::XMFLOAT3 target = player->GetPosition();
-	target.y += 0.5f;
+	
 	// 死亡時画面揺らし
 	if (player->GetDead())
 	{
+		static DirectX::XMFLOAT3 shakeTarget = player->GetPosition();
 		int ShakeTimer = -1 * stopTimer;
-		if (ShakeTimer % 5 == 0 && ShakeTimer < 21)
+		if (ShakeTimer % 8 == 0 && ShakeTimer < 25)
 		{
-			target.x += 1.0f;
-			target.y += 1.0f;
+			shakeTarget.x += 3.0f;
+			shakeTarget.y += 3.0f;
 		}
+		else if (ShakeTimer % 8 == 4 && ShakeTimer < 25)
+		{
+			shakeTarget.x -= 3.0f;
+			shakeTarget.y -= 3.0f;
+		}
+		cameraController->SetTarget(shakeTarget);
 	}
-	cameraController->SetTarget(target);
+	else
+	{
+		DirectX::XMFLOAT3 target = player->GetPosition();
+		target.y += 0.5f;
+		cameraController->SetTarget(target);
+	}
 	if (cameraController->GetCameraType() == cameraController->CameraType2) {
 		DirectX::XMFLOAT3 direction = { player->GetTransform()._21, player->GetTransform()._22,player->GetTransform()._23 };
 		cameraController->SetTDirection(direction);

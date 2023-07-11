@@ -120,7 +120,7 @@ void Player::DrawDebugPrimitive() {
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 
     // 衝突判定用のデバッグ球を描画
-    debugRenderer->DrawCylinder({ position.x, position.y - 0.25f, position.z }, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
+    debugRenderer->DrawCylinder({ position.x, position.y, position.z }, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
 
     // 弾丸デバッグプリミティブ描画
     projectileManager.DrawDebugPrimitive();
@@ -262,7 +262,7 @@ void Player::CollisionPlayerVsEnemies() {
         DirectX::XMFLOAT3 outPosition;
         if (Collision::IntersectCylinderVsCylinder (
             { this->GetPosition().x, this->GetPosition().y + 0.25f ,this->GetPosition().z }, this->GetRadius(), this->GetHeight(),
-            { enemy->GetPosition().x, enemy->GetPosition().y + 12.0f, enemy->GetPosition().z }, enemy->GetRadius(), enemy->GetHeight(),
+            { enemy->GetPosition().x, enemy->GetPosition().y, enemy->GetPosition().z }, enemy->GetRadius(), enemy->GetHeight(),
             outPosition)) {
             float enemyHeight = enemy->GetPosition().y + enemy->GetHeight();
             float playerHeight = this->GetPosition().y + this->GetHeight();
