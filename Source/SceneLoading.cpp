@@ -23,6 +23,12 @@ void SceneLoading::Finalize() {
         thread = nullptr;
     }
 
+    if (tutorial != nullptr)
+    {
+        delete tutorial;
+        tutorial = nullptr;
+    }
+
     // スプライト終了化
     if (sprite != nullptr) {
         delete sprite;
