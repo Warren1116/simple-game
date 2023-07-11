@@ -5,7 +5,7 @@
 #include "Graphics/Model.h"
 
 class Display : public Character {
-private:
+public:
     Display();
     ~Display();
 

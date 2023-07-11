@@ -8,8 +8,8 @@ EnemySlime::EnemySlime() {
     scale.x = scale.y = scale.z = 1.0f;
 
     // 幅、高さ設定
-    radius = 2.0f;
-    height = 1.0f;
+    radius = 4.0f; // 2.0f　← 元の大きさ
+    height = 3.0f; // 1.0f    元の大きさ
 }
 
 // デストラクタ

@@ -29,9 +29,10 @@ private:
 private:
     Sprite* sprite = nullptr;
     Sprite* Enter= nullptr;
-    Sprite* tutorial[2];
+    Sprite* tutorial[3];
     float angle = 0.0f;
     int tutorialNum = 0;
+    int flashingTimer = 0;
     Scene* nextScene = nullptr;
     std::thread* thread = nullptr;
 };

@@ -10,6 +10,7 @@ void SceneLoading::Initialize() {
     Enter = new Sprite("Data/Sprite/Enter.png");
     tutorial[0] = new Sprite("Data/Sprite/cyutoriaru.png");
     tutorial[1] = new Sprite("Data/Sprite/chuto2.png");
+    tutorial[2] = new Sprite("Data/Sprite/cyutoriaru_red.png");
 
     // スレッド開始
     thread = new std::thread(LoadingThread, this); // threadを起動する際はスレッド用関数とインスタンスのthisポインタを引数に渡す
@@ -25,17 +26,24 @@ void SceneLoading::Finalize() {
         thread = nullptr;
     }
 
+    if (tutorial[0] != nullptr)
+    {
+        delete tutorial[0];
+        tutorial[0] = nullptr;
+    }
+
     if (tutorial[1] != nullptr)
     {
         delete tutorial[1];
         tutorial[1] = nullptr;
     }
 
-    if (tutorial[0] != nullptr)
+    if (tutorial[2] != nullptr)
     {
-        delete tutorial[0];
-        tutorial[0] = nullptr;
+        delete tutorial[2];
+        tutorial[2] = nullptr;
     }
+
 
     if (Enter != nullptr)
     {
@@ -61,9 +69,16 @@ void SceneLoading::Update(float elapsedTime) {
     float ax = gamePad.GetAxisLX();
 
     if (ax < 0) tutorialNum = 0;
-    else if(ax > 0)  tutorialNum = 1;
+    else if (ax > 0)  tutorialNum = 1;
 
-    if (nextScene->IsReady() && (gamePad.GetButtonDown() & anyButton)) {
+    if (nextScene->IsReady() && (tutorialNum == 0 || tutorialNum == 2))
+    {
+        flashingTimer++;
+        if (flashingTimer / 40 % 2 == 1) tutorialNum = 0;
+        else tutorialNum = 2;
+    }
+
+    if (nextScene->IsReady() && (gamePad.GetButtonDown() & anyButton) && tutorialNum == 1) {
         SceneManager::Instance().ChangeScene(nextScene);
         nextScene = nullptr;
     }
@@ -110,16 +125,19 @@ void SceneLoading::Render() {
                 angle,
                 1, 1, 1, 1);
         }
-        else
+        else if (tutorialNum == 1)
         {
             textureWidth = static_cast<float>(Enter->GetTextureWidth());
             textureHeight = static_cast<float>(Enter->GetTextureHeight());
 
-            Enter->Render(dc,
-                positionX - 500, positionY + 100, textureWidth, textureHeight,
-                0, 0, textureWidth, textureHeight,
-                0,
-                1, 1, 1, 1);
+            flashingTimer++;
+
+            if (flashingTimer / 40 % 2 == 0)
+                Enter->Render(dc,
+                    positionX - 430, positionY + 110, textureWidth, textureHeight,
+                    0, 0, textureWidth, textureHeight,
+                    0,
+                    1, 1, 1, 1);
         }
     }
 

@@ -9,6 +9,7 @@
 void SceneTitle::Initialize() {
     // スプライト初期化
     sprite = new Sprite("Data/Sprite/Title.png");
+    black = new Sprite("Data/Sprite/black.png");
 
     // BGM初期化
     bgm = Audio::Instance().LoadAudioSource("Data/Audio/title.wav");
@@ -22,16 +23,31 @@ void SceneTitle::Finalize() {
         delete sprite;
         sprite = nullptr;
     }
+
+    if (black != nullptr) {
+        delete black;
+        black = nullptr;
+    }
 }
 
 // 更新処理
 void SceneTitle::Update(float elapsedTime) {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
-    // なにかボタンを押したらローディングシーンへ切り替え
+    // なにかボタンを押したら暗転開始
     const GamePadButton anyButton = GamePad::BTN_ENTER;
 
     if (gamePad.GetButtonDown() & anyButton) {
+        isFadein = true;
+    }
+
+    // 暗転
+    if (isFadein)
+    {
+        fade += 0.006f;
+    }
+
+    if (fade > 1.1f) {
         SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
     }
 }
@@ -61,5 +77,10 @@ void SceneTitle::Render() {
             0, 0, textureWidth, textureHeight,
             0,
             1, 1, 1, 1);
+        black->Render(dc,
+            0, 0, screenWidth, screenHeight,
+            0, 0, textureWidth, textureHeight,
+            0,
+            1, 1, 1, fade);
     }
 }

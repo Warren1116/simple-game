@@ -14,6 +14,8 @@ public:
 	void Draw(ID3D11DeviceContext* dc, const Model* model) override;
 	void End(ID3D11DeviceContext* dc) override;
 
+	//ID3D11DepthStencilState* GetDepthStencilStates(int val) { return depthStencilStates[val].Get(); }
+
 private:
 	static const int MaxBones = 128;
 
@@ -44,7 +46,7 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11BlendState>		blendState;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>	rasterizerState;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilState>	depthStencilState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState>	depthStencilStates[4];
 
 	Microsoft::WRL::ComPtr<ID3D11SamplerState>		samplerState;
 };

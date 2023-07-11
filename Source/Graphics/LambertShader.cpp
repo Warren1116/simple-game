@@ -116,7 +116,29 @@ LambertShader::LambertShader(ID3D11Device* device)
 		desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 		desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
-		HRESULT hr = device->CreateDepthStencilState(&desc, depthStencilState.GetAddressOf());
+		HRESULT hr = device->CreateDepthStencilState(&desc, depthStencilStates[0].GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+		// 深度テスト：オン 深度ライト：オフ
+		desc = {};
+		desc.DepthEnable = true;
+		desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+		desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+		hr = device->CreateDepthStencilState(&desc, depthStencilStates[1].GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+		// 深度テスト：オフ 深度ライト：オン
+		desc = {};
+		desc.DepthEnable = false;
+		desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+		hr = device->CreateDepthStencilState(&desc, depthStencilStates[2].GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+		// 深度テスト：オフ 深度ライト：オフ
+		desc = {};
+		desc.DepthEnable = false;
+		desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+		desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+		hr = device->CreateDepthStencilState(&desc, depthStencilStates[3].GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	}
 
@@ -180,7 +202,7 @@ void LambertShader::Begin(ID3D11DeviceContext* dc, const RenderContext& rc)
 
 	const float blend_factor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	dc->OMSetBlendState(blendState.Get(), blend_factor, 0xFFFFFFFF);
-	dc->OMSetDepthStencilState(depthStencilState.Get(), 0);
+	dc->OMSetDepthStencilState(depthStencilStates[0].Get(), 0);
 	dc->RSSetState(rasterizerState.Get());
 	dc->PSSetSamplers(0, 1, samplerState.GetAddressOf());
 

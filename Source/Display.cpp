@@ -16,9 +16,14 @@ void Display::Update(float elapsedTime) {
 }
 
 void Display::Render(ID3D11DeviceContext* dc, Shader* shader) {
-
+    if (model != nullptr)
+    {
+        shader->Draw(dc, model.get());
+    }
 }
 
 void Display::DisplayTurn(float elapsedTime) {
     angle.y += DirectX::XMConvertToRadians(45) * elapsedTime;
+    if (angle.y < -DirectX::XM_2PI) angle.y += DirectX::XM_2PI;
+    if (angle.y > DirectX::XM_2PI) angle.y -= DirectX::XM_2PI;
 }

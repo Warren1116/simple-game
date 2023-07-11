@@ -24,6 +24,10 @@ public:
 
 private:
     Sprite* sprite = nullptr;
+    Sprite* black = nullptr;
     Model* model = nullptr;
+    float fade = 0.0f;
+    bool isFadein = false;
+
     std::unique_ptr<AudioSource>bgm = nullptr;
 };

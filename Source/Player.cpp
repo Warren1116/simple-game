@@ -18,7 +18,7 @@ Player::Player() {
     // モデルが大きいのでスケーリング
     scale.x = scale.y = scale.z = 0.05f;
     position.y = 60.0f;
-    position.z = -600.0f;
+    position.z = -550.0f;
     angle.x = DirectX::XMConvertToRadians(90);
     height = 0.5f;
     //hitEffect = std::make_unique<Effect>("Data/Effect/Explosion.efk");
@@ -69,7 +69,6 @@ void Player::Update(float elapsedTime) {
     else if (ay > 0)
     {
         select_pos = title_pos;
-
     }
 }
 
@@ -93,8 +92,11 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
             // なにかボタンを押したらローディングシーンへ切り替え
             const GamePadButton anyButton = GamePad::BTN_ENTER;
 
-            if (gamePad.GetButtonDown() & anyButton) {
+            if (gamePad.GetButtonDown() & anyButton && select_pos.y == title_pos.y) {
                 SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
+            }
+            if (gamePad.GetButtonDown() & anyButton && select_pos.y == next_pos.y) {
+                SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
             }
         }
 
@@ -115,7 +117,10 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
             // なにかボタンを押したらローディングシーンへ切り替え
             const GamePadButton anyButton = GamePad::BTN_ENTER;
 
-            if (gamePad.GetButtonDown() & anyButton) {
+            if (gamePad.GetButtonDown() & anyButton && select_pos.y == title_pos.y) {
+                SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
+            }
+            if (gamePad.GetButtonDown() & anyButton && select_pos.y == next_pos.y) {
                 SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
             }
         }

@@ -174,10 +174,10 @@ void SceneGame::Render()
 	// 3Dデバッグ描画
 	{
 		// プレイヤーデバッグプリミティブ描画
-		player->DrawDebugPrimitive();
+		//player->DrawDebugPrimitive();
 
 		// エネミーデバッグプリミティブ描画
-		EnemyManager::Instance().DrawDebugPrimitive();
+		//EnemyManager::Instance().DrawDebugPrimitive();
 
 		// ラインレンダラ描画実行
 		graphics.GetLineRenderer()->Render(dc, rc.view, rc.projection);
@@ -224,7 +224,7 @@ void SceneGame::Render()
 	// 2DデバッグGUI描画
 	{
 		// プレイヤーデバッグ描画
-		player->DrawDebugGUI();
-		cameraController->DrawDebugGUI();
+		//player->DrawDebugGUI();
+		//cameraController->DrawDebugGUI();
 	}
 }
