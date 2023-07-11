@@ -27,6 +27,12 @@ Player::Player() {
     spriteGameclear = new Sprite("Data/Sprite/gameclear.png");
     spriteGameover = new Sprite("Data/Sprite/gameover.png");
 
+    sprite_select_title = new Sprite("Data/Sprite/totitle.png");
+    sprite_select_next = new Sprite("Data/Sprite/next.png");
+
+    select_pos = { screenWidth * 0.5f, screenHeight * 0.6f };
+    title_pos = { screenWidth * 0.5f, screenHeight * 0.6f };
+    next_pos = { screenWidth * 0.4f, screenHeight * 0.85f };
 }
 
 // デストラクタ
@@ -53,6 +59,18 @@ void Player::Update(float elapsedTime) {
     {
         model->UpdateTransform(transform);
     }
+    timer++;
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    float ay = gamePad.GetAxisLY();
+    if (ay < 0)
+    {
+        select_pos = next_pos;
+    }
+    else if (ay > 0)
+    {
+        select_pos = title_pos;
+
+    }
 }
 
 // 描画処理
@@ -69,6 +87,7 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
         if (deathTimer <= 0)
         {
             DrawClear(dc);
+           
             GamePad& gamePad = Input::Instance().GetGamePad();
 
             // なにかボタンを押したらローディングシーンへ切り替え
@@ -102,6 +121,11 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
         }
     }
 
+    if (IsDead())
+    {
+        Draw(dc);
+        DrawNext(dc);
+    }
 
     if (model != nullptr)
     {
@@ -115,8 +139,8 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
 void Player::DrawDebugPrimitive() {
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 
-    // 衝突判定用のデバッグ球を描画
-    debugRenderer->DrawCylinder({ position.x, position.y, position.z }, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
+    //// 衝突判定用のデバッグ球を描画
+    //debugRenderer->DrawCylinder({ position.x, position.y, position.z }, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
 }
 
 // デバッグ用GUI描画
@@ -274,10 +298,6 @@ void Player::CollisionPlayerVsEnemies() {
     }
 }
 
-// 着地した時に呼ばれる
-void Player::OnLanding() {
-    jumpCount = 0;
-}
 
 // 前進処理
 void Player::MoveFront(DirectX::XMFLOAT3 direction, float speed) {
@@ -402,9 +422,57 @@ void Player::DrawOver(ID3D11DeviceContext* dc)
     }
     spriteGameover->Render(dc,
         screenWidth * 0.35f, showHeight, screenWidth * 0.5f, 200,
-        0, 0, 1135, 150,
+        0, 0, 1135, 140,
         0,
         1, 1, 1, 1);
+}
+
+void Player::Draw(ID3D11DeviceContext* dc)
+{
+    if (deathTimer < 0 && select_pos.y == title_pos.y)
+    {
+        if (timer >> 5 & 0x01)
+        {
+        sprite_select_title->Render(dc,
+            screenWidth * 0.5f, screenHeight * 0.6f, 300, 120,
+            230, 0, 780, 150,
+            0,
+            1, 1, 1, 1);
+
+        }
+    }
+    else
+    {
+        sprite_select_title->Render(dc,
+            screenWidth * 0.5f, screenHeight * 0.6f, 300, 120,
+            230, 0, 780, 150,
+            0,
+            1, 1, 1, 1);
+    }
+}
+
+void Player::DrawNext(ID3D11DeviceContext* dc)
+{
+    if (deathTimer < 0 && select_pos.y == next_pos.y)
+    {
+        if (timer >> 5 & 0x01)
+        {
+            sprite_select_next->Render(dc,
+                screenWidth * 0.4f, screenHeight * 0.85f, 600, 120,
+                230, 0, 900, 150,
+                0,
+                1, 1, 1, 1);
+
+        }
+    }
+    else
+    {
+        sprite_select_next->Render(dc,
+            screenWidth * 0.4f, screenHeight * 0.85f, 600, 120,
+            230, 0, 900, 150,
+            0,
+            1, 1, 1, 1);
+    }
 }
 
 void Player::UpdateVerticalVelocity(float elapsedFrame) {

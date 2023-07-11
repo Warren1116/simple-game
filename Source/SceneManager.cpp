@@ -2,9 +2,15 @@
 
 // 更新処理
 void SceneManager::Update(float elapsedTime) {
-    if (nextScene != nullptr) {
+    if (nextScene != nullptr)
+    {
         // 古いシーンを終了処理
-        Clear();
+       /* Clear();*/
+        if (currentScene != nullptr)
+        {
+            currentScene->Finalize();
+            delete currentScene;
+        }
 
         // 新しいシーンを設定
         currentScene = nextScene;

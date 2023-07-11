@@ -41,9 +41,7 @@ public:
     // クリア判定取得
     bool GetClear() const { return ishitEnemy; }
 
-protected:
-    // 着地した時に呼ばれる
-    void OnLanding() override;
+
 
 private:
     void InputMove(float elapsedTime);
@@ -70,6 +68,8 @@ private:
     //クリア画面とゲームオーバー画面を描画する
     void DrawClear(ID3D11DeviceContext* dc);
     void DrawOver(ID3D11DeviceContext* dc);
+    void Draw(ID3D11DeviceContext* dc);
+    void DrawNext(ID3D11DeviceContext* dc);
 
 private:
     //modelを消すためにスマートポインタを使う
@@ -105,6 +105,8 @@ private:
     std::unique_ptr<Effect> flyEffect = nullptr;
     Sprite* spriteGameclear = nullptr;
     Sprite* spriteGameover = nullptr;
+    Sprite* sprite_select_title = nullptr;
+    Sprite* sprite_select_next  = nullptr;
 
 private:
     // 定数 ImGuiで変更する都合上constがないですがここに書いている変数は定数つもりです
@@ -134,4 +136,8 @@ private:
     float screenWidth = static_cast<float>(1280.0f);
     float screenHeight = static_cast<float>(720.0f);
     float showHeight = -150;
+
+    DirectX::XMFLOAT2 select_pos;
+    DirectX::XMFLOAT2 title_pos;
+    DirectX::XMFLOAT2 next_pos;
 };

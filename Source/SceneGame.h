@@ -35,6 +35,6 @@ private:
 	Sprite* sprite_in_gauge = nullptr;
 	std::unique_ptr<AudioSource>bgm = nullptr;
 	int stopTimer = 15;
-	Sprite* sprite_select_title = nullptr;
-	Sprite* sprite_select_next = nullptr;
+	//Sprite* sprite_select_title = nullptr;
+	//Sprite* sprite_select_next = nullptr;
 };

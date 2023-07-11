@@ -11,8 +11,7 @@ void SceneGame::Initialize()
 	// スプライト初期化
 	sprite_gauge = new Sprite("Data/Sprite/gauge.png");
 	sprite_in_gauge = new Sprite("Data/Sprite/In_gauge.png");
-	sprite_select_title = new Sprite("Data/Sprite/totitle.png");
-	sprite_select_next = new Sprite("Data/Sprite/next.png");
+
 	// ステージ初期化
 	stage = new Stage();
 	player = new Player();
@@ -70,16 +69,16 @@ void SceneGame::Finalize()
 		delete sprite_in_gauge;
 		sprite_in_gauge = nullptr;
 	}
-	if (sprite_select_title != nullptr)
-	{
-		delete sprite_select_title;
-		sprite_select_title = nullptr;
-	}
-	if (sprite_select_next != nullptr)
-	{
-		delete sprite_select_next;
-		sprite_select_next = nullptr;
-	}
+	//if (sprite_select_title != nullptr)
+	//{
+	//	delete sprite_select_title;
+	//	sprite_select_title = nullptr;
+	//}
+	//if (sprite_select_next != nullptr)
+	//{
+	//	delete sprite_select_next;
+	//	sprite_select_next = nullptr;
+	//}
 }
 
 // 更新処理
@@ -194,12 +193,14 @@ void SceneGame::Render()
 		float textureWidth = static_cast<float>(sprite_gauge->GetTextureWidth());
 		float textureHeight = static_cast<float>(sprite_gauge->GetTextureHeight());
 		// ゲージスプライト描画
-		sprite_gauge->Render(dc,
-			screenWidth * 0.3f, screenHeight, 700, 45,
-			0, 0, textureWidth, textureHeight,
-			0,
-			1, 1, 1, 1);
-
+		if (player->IsDead() == false)
+		{
+			sprite_gauge->Render(dc,
+				screenWidth * 0.3f, screenHeight, 700, 45,
+				0, 0, textureWidth, textureHeight,
+				0,
+				1, 1, 1, 1);
+		}
 		if (player->GetFuel() >= 0.0f)
 		{
 			float screenWidth = static_cast<float>(1280.0f);
@@ -207,20 +208,17 @@ void SceneGame::Render()
 			textureWidth = static_cast<float>(sprite_in_gauge->GetTextureWidth());
 			textureHeight = static_cast<float>(sprite_in_gauge->GetTextureHeight());
 			// ゲージスプライト描画
-			sprite_in_gauge->Render(dc,
-				screenWidth * 0.3f + 5, screenHeight + 3, (player->GetFuel() / 100) * 690.0f, 39,
-				0, 0, textureWidth, textureHeight,
-				0,
-				1, 1, 1, 1);
+			if (player->IsDead() == false)
+			{
+				sprite_in_gauge->Render(dc,
+					screenWidth * 0.3f + 5, screenHeight + 3, (player->GetFuel() / 100) * 690.0f, 39,
+					0, 0, textureWidth, textureHeight,
+					0,
+					1, 1, 1, 1);
+
+			}
 		}
-		if (player->IsDead())
-		{
-			sprite_select_title->Render(dc,
-				screenWidth * 0.3f, screenHeight * 0.5f, 800, 70,
-				100, 0, 1070, 150,
-				0,
-				1, 1, 1, 1);
-		}
+
 	}
 
 	// 2DデバッグGUI描画

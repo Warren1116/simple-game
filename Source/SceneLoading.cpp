@@ -12,7 +12,7 @@ void SceneLoading::Initialize() {
     tutorial[1] = new Sprite("Data/Sprite/chuto2.png");
 
     // スレッド開始
-    thread = new std::thread(SceneLoading::LoadingThread, this); // threadを起動する際はスレッド用関数とインスタンスのthisポインタを引数に渡す
+    thread = new std::thread(LoadingThread, this); // threadを起動する際はスレッド用関数とインスタンスのthisポインタを引数に渡す
 }
 
 // 終了化
@@ -25,10 +25,10 @@ void SceneLoading::Finalize() {
         thread = nullptr;
     }
 
-    if (Enter != nullptr)
+    if (tutorial[1] != nullptr)
     {
-        delete Enter;
-        Enter = nullptr;
+        delete tutorial[1];
+        tutorial[1] = nullptr;
     }
 
     if (tutorial[0] != nullptr)
@@ -37,10 +37,10 @@ void SceneLoading::Finalize() {
         tutorial[0] = nullptr;
     }
 
-    if (tutorial[1] != nullptr)
+    if (Enter != nullptr)
     {
-        delete tutorial[1];
-        tutorial[1] = nullptr;
+        delete Enter;
+        Enter = nullptr;
     }
 
     // スプライト終了化
