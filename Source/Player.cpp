@@ -399,7 +399,7 @@ void Player::DrawClear(ID3D11DeviceContext* dc)
 
 void Player::DrawOver(ID3D11DeviceContext* dc)
 {
-    spriteGameclear->Render(dc,
+    spriteGameover->Render(dc,
         screenWidth * 0.35f, screenHeight * 0.25, screenWidth * 0.5f, 200,
         0, 0, 1270, 150,
         0,
@@ -409,7 +409,7 @@ void Player::DrawOver(ID3D11DeviceContext* dc)
 void Player::UpdateVerticalVelocity(float elapsedFrame) {
     // 燃料を使っていなければ縦に重力を加える
     if (!fuelUse) {
-        if (hasSpeed && fuel > 0) {
+        if (hasSpeed) {
             float speed = gravity * elapsedFrame;
 
             if (velocity.z > MinVelocityZ) velocity.y += speed * GravityYAdjustmentNormal;
@@ -452,8 +452,8 @@ void Player::UpdateHorizontalVelocity(float elapsedFrame) {
         //横方向の速力が摩擦力以下になったので速力を無効化
         else
         {
-            velocity.x = 0;
-            velocity.y = 0;
+            velocity.x = 0.0f;
+            velocity.y = 0.0f;
             velocity.z = MinVelocityZ;
         }
     }
@@ -492,7 +492,7 @@ void Player::GravityAdjust(float elapsedFrame) {
 
     float rotate = sinf(angle.x - DirectX::XMConvertToRadians(90)); // ロジックの中で90度引いてるのはよくない
     float speed = gravity * elapsedFrame;
-    float rot = 1.0f - rotate * 0.5f/* - rotate*/; // ここが問題点
+    float rot = 1.0f - rotate * 0.8f/* - rotate*/; // ここが問題点
     // 下向き
     //if (rotate > 0 && onAddSpeed) velocity.z -= speed * rot * GravityZAdjustmentAdd;
     // 上向き
@@ -501,13 +501,14 @@ void Player::GravityAdjust(float elapsedFrame) {
     // 下向き
     if (rotate > DirectX::XMConvertToRadians(0)) {
         onSpeed = true;
-        acceleration += -speed * rot * 0.2f;
+        acceleration += -speed * rot * 0.5f;
+        if (acceleration > 40) acceleration = 40;
     }
     //else if (rotate == DirectX::XMConvertToRadians(0)) onSpeed = false;
     // 上向き
     else/* if (rotate < 0 && acceleration > MinAcceleSpeed)*/ {
         onSpeed = false;
-        acceleration -= -speed * rot * 0.2f;
+        acceleration -= -speed * rot * GravityZAdjustmentSub;
         if (acceleration < MinAcceleSpeed) acceleration = MinAcceleSpeed;
     }
 }

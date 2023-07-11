@@ -28,8 +28,10 @@ private:
 
 private:
     Sprite* sprite = nullptr;
-    Sprite* tutorial = nullptr;
+    Sprite* Enter= nullptr;
+    Sprite* tutorial[2];
     float angle = 0.0f;
+    int tutorialNum = 0;
     Scene* nextScene = nullptr;
     std::thread* thread = nullptr;
 };

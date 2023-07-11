@@ -6,8 +6,10 @@
 // 初期化
 void SceneLoading::Initialize() {
     // スプライト初期化
-    sprite = new Sprite("Data/Sprite/LoadingIcon.png");
-    tutorial = new Sprite("Data/Sprite/cyutoriaru.png");
+    sprite = new Sprite("Data/Sprite/road.png");
+    Enter = new Sprite("Data/Sprite/Enter.png");
+    tutorial[0] = new Sprite("Data/Sprite/cyutoriaru.png");
+    tutorial[1] = new Sprite("Data/Sprite/chuto2.png");
 
     // スレッド開始
     thread = new std::thread(SceneLoading::LoadingThread, this); // threadを起動する際はスレッド用関数とインスタンスのthisポインタを引数に渡す
@@ -23,10 +25,22 @@ void SceneLoading::Finalize() {
         thread = nullptr;
     }
 
-    if (tutorial != nullptr)
+    if (Enter != nullptr)
     {
-        delete tutorial;
-        tutorial = nullptr;
+        delete Enter;
+        Enter = nullptr;
+    }
+
+    if (tutorial[0] != nullptr)
+    {
+        delete tutorial[0];
+        tutorial[0] = nullptr;
+    }
+
+    if (tutorial[1] != nullptr)
+    {
+        delete tutorial[1];
+        tutorial[1] = nullptr;
     }
 
     // スプライト終了化
@@ -44,6 +58,10 @@ void SceneLoading::Update(float elapsedTime) {
     // 次のシーンの準備が完了したときになにかボタンを押したらシーンを切り替える
     GamePad& gamePad = Input::Instance().GetGamePad();
     const GamePadButton anyButton = GamePad::BTN_ENTER;
+    float ax = gamePad.GetAxisLX();
+
+    if (ax < 0) tutorialNum = 0;
+    else if(ax > 0)  tutorialNum = 1;
 
     if (nextScene->IsReady() && (gamePad.GetButtonDown() & anyButton)) {
         SceneManager::Instance().ChangeScene(nextScene);
@@ -68,10 +86,10 @@ void SceneLoading::Render() {
     {
         float screenWidth = static_cast<float>(graphics.GetScreenWidth());
         float screenHeight = static_cast<float>(graphics.GetScreenHeight());
-        float textureWidth = static_cast<float>(tutorial->GetTextureWidth());
-        float textureHeight = static_cast<float>(tutorial->GetTextureHeight());
+        float textureWidth = static_cast<float>(tutorial[tutorialNum]->GetTextureWidth());
+        float textureHeight = static_cast<float>(tutorial[tutorialNum]->GetTextureHeight());
 
-        tutorial->Render(dc,
+        tutorial[tutorialNum]->Render(dc,
             0, 0, screenWidth, screenHeight,
             0, 0, textureWidth, textureHeight,
             0,
@@ -90,6 +108,17 @@ void SceneLoading::Render() {
                 positionX, positionY, textureWidth, textureHeight,
                 0, 0, textureWidth, textureHeight,
                 angle,
+                1, 1, 1, 1);
+        }
+        else
+        {
+            textureWidth = static_cast<float>(Enter->GetTextureWidth());
+            textureHeight = static_cast<float>(Enter->GetTextureHeight());
+
+            Enter->Render(dc,
+                positionX - 500, positionY + 100, textureWidth, textureHeight,
+                0, 0, textureWidth, textureHeight,
+                0,
                 1, 1, 1, 1);
         }
     }

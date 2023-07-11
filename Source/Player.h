@@ -123,7 +123,6 @@ private:
     float MaxAcceleSpeed = 40.0f;
     float MinAcceleSpeed = 0.0f;
     float MinVelocityZ = 15.0f;
-    float MinVelocity = 5.0f;
 
 private:
     // •â³’l•Ï” ‰Šú’l‚Í•Ï‚¦‚È‚¢‚Å‚­‚¾‚³‚¢•ÏX‚·‚éÛ‚ÍImGui“™‚Å‚¨Šè‚¢‚µ‚Ü‚·

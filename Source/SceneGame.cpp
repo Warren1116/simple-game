@@ -37,7 +37,7 @@ void SceneGame::Initialize()
 	// エネミー初期化
 
 	EnemySlime* slime = new EnemySlime();
-	slime->SetPosition(DirectX::XMFLOAT3(50.0f, 118.0f, 382.0f));
+	slime->SetPosition(DirectX::XMFLOAT3(55.0f, 114.0f, 398.0f));
 	EnemyManager::Instance().Register(slime);
 
 }
@@ -88,12 +88,12 @@ void SceneGame::Update(float elapsedTime)
 	{
 		static DirectX::XMFLOAT3 shakeTarget = player->GetPosition();
 		int ShakeTimer = -1 * stopTimer;
-		if (ShakeTimer % 8 == 0 && ShakeTimer < 25)
+		if (ShakeTimer % 4 == 0 && ShakeTimer < 21)
 		{
 			shakeTarget.x += 3.0f;
 			shakeTarget.y += 3.0f;
 		}
-		else if (ShakeTimer % 8 == 4 && ShakeTimer < 25)
+		else if (ShakeTimer % 4 == 2 && ShakeTimer < 21)
 		{
 			shakeTarget.x -= 3.0f;
 			shakeTarget.y -= 3.0f;
