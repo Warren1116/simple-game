@@ -2,7 +2,6 @@
 #include "Player.h"
 #include "Camera.h"
 #include "EnemyManager.h"
-#include "ProjectileStraight.h"
 #include "Collision.h"
 #include "Input/Input.h"
 #include "Graphics/Graphics.h"
@@ -108,9 +107,6 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader) {
     {
         shader->Draw(dc, model.get());
 
-        // 弾丸描画処理
-        projectileManager.Render(dc,shader);
-
     }
 
 }
@@ -121,9 +117,6 @@ void Player::DrawDebugPrimitive() {
 
     // 衝突判定用のデバッグ球を描画
     debugRenderer->DrawCylinder({ position.x, position.y, position.z }, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
-
-    // 弾丸デバッグプリミティブ描画
-    projectileManager.DrawDebugPrimitive();
 }
 
 // デバッグ用GUI描画
@@ -390,8 +383,12 @@ void Player::ChackUseFuel() {
 
 void Player::DrawClear(ID3D11DeviceContext* dc)
 {
+    if (showHeight != screenHeight * 0.25)
+    {
+        showHeight += 2.5f;
+    }
     spriteGameclear->Render(dc,
-        screenWidth * 0.35f, screenHeight * 0.25, screenWidth * 0.5f, 200,
+        screenWidth * 0.35f, showHeight, screenWidth * 0.5f, 200,
         0, 0, 1270, 150,
         0,
         1, 1, 1, 1);
@@ -399,9 +396,13 @@ void Player::DrawClear(ID3D11DeviceContext* dc)
 
 void Player::DrawOver(ID3D11DeviceContext* dc)
 {
+    if (showHeight != screenHeight * 0.25)
+    {
+        showHeight += 2.5f;
+    }
     spriteGameover->Render(dc,
-        screenWidth * 0.35f, screenHeight * 0.25, screenWidth * 0.5f, 200,
-        0, 0, 1270, 150,
+        screenWidth * 0.35f, showHeight, screenWidth * 0.5f, 200,
+        0, 0, 1135, 150,
         0,
         1, 1, 1, 1);
 }

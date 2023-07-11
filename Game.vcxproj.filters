@@ -135,15 +135,6 @@
     <ClInclude Include="Source\Player.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Projectile.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ProjectileManager.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ProjectileStraight.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Source\SceneGame.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -261,15 +252,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Player.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Projectile.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ProjectileManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ProjectileStraight.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\SceneGame.cpp">

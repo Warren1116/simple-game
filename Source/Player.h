@@ -3,7 +3,6 @@
 #include "Graphics/Shader.h"
 #include "Graphics/Model.h"
 #include "Character.h"
-#include "ProjectileManager.h"
 #include "Effect.h"
 #include "Graphics/Sprite.h"
 
@@ -99,7 +98,6 @@ private:
     bool onAddSpeed = false; // ‰Á‘¬‚³‚¹‚é‚©‚Ç‚¤‚© ‚¢‚é‚Ì‚©‰ö‚µ‚¢
     bool onSpeed = false; // true‰Á‘¬AfalseŒ¸‘¬Aã“ñ‚Â‚Ì‡‘Ì”Å
 
-    ProjectileManager projectileManager;
     //std::unique_ptr<Model> model;
 
     //effect‚Ì’Ç‰Á
@@ -135,4 +133,5 @@ private:
 
     float screenWidth = static_cast<float>(1280.0f);
     float screenHeight = static_cast<float>(720.0f);
+    float showHeight = -150;
 };
