@@ -217,7 +217,7 @@ void SceneGame::Render()
 		{
 			sprite_select_title->Render(dc,
 				screenWidth * 0.3f, screenHeight * 0.5f, 800, 70,
-				100, 0, 1270, 150,
+				100, 0, 1070, 150,
 				0,
 				1, 1, 1, 1);
 		}

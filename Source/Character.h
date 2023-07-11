@@ -98,8 +98,8 @@ protected:
     float stepOffset = 1.0f;
     float invincibleTimer = 0.0f;
     float friction = 3.0f;      // 摩擦力
-    float acceleration = 30.0f; // 加速度
-    float maxMoveSpeed = 50.0f; // 最大加速度
+    float acceleration = 25.0f; // 加速度
+    float maxMoveSpeed = 40.0f; // 最大加速度
     float moveSpeed = 50.0f;
     float moveVecX = 0.0f;
     float moveVecY = 0.0f;
